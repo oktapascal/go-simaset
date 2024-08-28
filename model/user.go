@@ -9,16 +9,15 @@ import (
 
 type (
 	User struct {
-		Id            string
-		Username      string
-		Email         string
-		Password      string
-		Name          string
-		Phone         string
-		RememberToken string
-		Avatar        string
-		StatusActive  bool
-		DeletedAt     time.Time
+		Id           string
+		Username     string
+		Email        string
+		Password     string
+		Name         string
+		Phone        string
+		Avatar       string
+		StatusActive bool
+		DeletedAt    time.Time
 	}
 
 	UserPermission struct {
@@ -55,6 +54,7 @@ type (
 		FindByUsername(ctx context.Context, tx *sql.Tx, username string) (*User, error)
 		CreateUser(ctx context.Context, tx *sql.Tx, data *User) *User
 		CreateUserPermission(ctx context.Context, tx *sql.Tx, data *[]UserPermission)
+		FindPermissionUser(ctx context.Context, tx *sql.Tx, userId string) *[]UserPermission
 	}
 
 	UserService interface {

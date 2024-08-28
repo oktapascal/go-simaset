@@ -6,13 +6,14 @@ import (
 )
 
 type JwtParameters struct {
-	Id         string
-	Email      string
-	Username   string
-	FlagCreate bool
-	FlagRead   bool
-	FlagUpdate bool
-	FlagDelete bool
+	Id          string
+	Email       string
+	Username    string
+	FlagCreate  bool
+	FlagRead    bool
+	FlagUpdate  bool
+	FlagDelete  bool
+	FlagApprove bool
 }
 
 func GenerateToken(claims jwt.MapClaims) *jwt.Token {

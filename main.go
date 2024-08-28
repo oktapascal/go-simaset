@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/oktapascal/go-simaset/app/login"
 	"github.com/oktapascal/go-simaset/app/user"
 	"github.com/oktapascal/go-simaset/app/welcome"
 	"github.com/oktapascal/go-simaset/config"
@@ -37,6 +38,7 @@ func main() {
 	router.MethodNotAllowed(welcomeHandler.MethodNotAllowedApi())
 
 	user.Wire(validate, db).InitializeRoute(router)
+	login.Wire(validate, db).InitializeRoute(router)
 
 	log.Info(fmt.Sprintf("%s Application Started on http://localhost:%s", viper.GetString("APP_NAME"), viper.GetString("APP_PORT")))
 	err = http.ListenAndServe(":"+viper.GetString("APP_PORT"), router)

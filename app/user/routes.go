@@ -10,7 +10,7 @@ type Router struct {
 }
 
 func (router *Router) InitializeRoute(mux *chi.Mux) {
-	mux.Route("/api", func(route chi.Router) {
-		route.Post("/user", router.hdl.SaveUser())
+	mux.Route("/api/user", func(route chi.Router) {
+		route.Post("/", router.hdl.SaveUser())
 	})
 }

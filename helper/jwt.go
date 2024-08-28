@@ -9,15 +9,17 @@ import (
 
 func GenerateAccessToken(parameters *config.JwtParameters) (string, error) {
 	token := config.GenerateToken(jwt.MapClaims{
-		"iss":         viper.GetString("APP_NAME"),
-		"sub":         parameters.Username,
-		"aud":         parameters.Email,
-		"exp":         time.Now().Add(15 * time.Minute).Unix(),
-		"iat":         time.Now().Unix(),
-		"flag_create": parameters.FlagCreate,
-		"flag_read":   parameters.FlagRead,
-		"flag_update": parameters.FlagUpdate,
-		"flag_delete": parameters.FlagDelete,
+		"iss":          viper.GetString("APP_NAME"),
+		"sub":          parameters.Username,
+		"aud":          parameters.Email,
+		"exp":          time.Now().Add(15 * time.Minute).Unix(),
+		"iat":          time.Now().Unix(),
+		"id":           parameters.Id,
+		"flag_create":  parameters.FlagCreate,
+		"flag_read":    parameters.FlagRead,
+		"flag_update":  parameters.FlagUpdate,
+		"flag_delete":  parameters.FlagDelete,
+		"flag_approve": parameters.FlagApprove,
 	})
 
 	tokenString, err := token.SignedString([]byte(viper.GetString("JWT_SIGNATURE_KEY")))

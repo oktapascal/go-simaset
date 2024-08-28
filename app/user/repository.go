@@ -12,7 +12,7 @@ type Repository struct {
 }
 
 func (rpo *Repository) FindByEmail(ctx context.Context, tx *sql.Tx, email string) (*model.User, error) {
-	query := "select id, username, email, password, name, phone, remember_token, avatar from users where email = ?"
+	query := "select id, username, email, password, name, phone, avatar from users where email = ?"
 
 	rows, err := tx.QueryContext(ctx, query, email)
 	if err != nil {
@@ -28,8 +28,7 @@ func (rpo *Repository) FindByEmail(ctx context.Context, tx *sql.Tx, email string
 
 	user := new(model.User)
 	if rows.Next() {
-		err = rows.Scan(&user.Id, &user.Username, &user.Email, &user.Password, &user.Name, &user.Phone,
-			&user.RememberToken, &user.Avatar)
+		err = rows.Scan(&user.Id, &user.Username, &user.Email, &user.Password, &user.Name, &user.Phone, &user.Avatar)
 
 		if err != nil {
 			panic(err)
@@ -42,7 +41,7 @@ func (rpo *Repository) FindByEmail(ctx context.Context, tx *sql.Tx, email string
 }
 
 func (rpo *Repository) FindByUsername(ctx context.Context, tx *sql.Tx, username string) (*model.User, error) {
-	query := "select id, username, email, password, name, phone, remember_token, avatar from users where username = ?"
+	query := "select id, username, email, password, name, phone, avatar from users where username = ?"
 
 	rows, err := tx.QueryContext(ctx, query, username)
 	if err != nil {
@@ -58,8 +57,7 @@ func (rpo *Repository) FindByUsername(ctx context.Context, tx *sql.Tx, username 
 
 	user := new(model.User)
 	if rows.Next() {
-		err = rows.Scan(&user.Id, &user.Username, &user.Email, &user.Password, &user.Name, &user.Phone,
-			&user.RememberToken, &user.Avatar)
+		err = rows.Scan(&user.Id, &user.Username, &user.Email, &user.Password, &user.Name, &user.Phone, &user.Avatar)
 
 		if err != nil {
 			panic(err)
@@ -72,11 +70,11 @@ func (rpo *Repository) FindByUsername(ctx context.Context, tx *sql.Tx, username 
 }
 
 func (rpo *Repository) CreateUser(ctx context.Context, tx *sql.Tx, data *model.User) *model.User {
-	query := `insert into users (id, username, email, password, name, phone, status_active, remember_token, avatar) 
+	query := `insert into users (id, username, email, password, name, phone, status_active, avatar) 
 	values (UUID(),?,?,?,?,?,?,?,?)`
 
 	_, err := tx.ExecContext(ctx, query, data.Username, data.Email, data.Password, data.Name, data.Phone,
-		data.StatusActive, data.RememberToken, data.Avatar)
+		data.StatusActive, data.Avatar)
 	if err != nil {
 		panic(err)
 	}
@@ -126,4 +124,34 @@ func (rpo *Repository) CreateUserPermission(ctx context.Context, tx *sql.Tx, dat
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (rpo *Repository) FindPermissionUser(ctx context.Context, tx *sql.Tx, userId string) *[]model.UserPermission {
+	query := "select user_id, permission_id, status_permit from users_permissions where user_id = ?"
+	rows, err := tx.QueryContext(ctx, query, userId)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	var userPermissions []model.UserPermission
+
+	for rows.Next() {
+		userPermission := model.UserPermission{}
+
+		err = rows.Scan(&userPermission.UserId, &userPermission.PermissionId, &userPermission.StatusPermit)
+		if err != nil {
+			panic(err)
+		}
+
+		userPermissions = append(userPermissions, userPermission)
+	}
+
+	return &userPermissions
 }
