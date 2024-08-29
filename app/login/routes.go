@@ -12,10 +12,16 @@ type Router struct {
 
 func (router *Router) InitializeRoute(mux *chi.Mux) {
 	mux.Route("/api/auth", func(route chi.Router) {
-		route.Use(middleware.AuthorizationCheckMiddleware)
-		route.Use(middleware.VerifyAccessTokenMiddleware)
-
 		route.Post("/login", router.hdl.Login())
-		route.Post("/logout", router.hdl.Logout())
+		route.Group(func(route chi.Router) {
+			route.Use(middleware.AuthorizationCheckMiddleware)
+			route.Use(middleware.VerifyRefreshTokenMiddleware)
+			route.Get("/access-token", router.hdl.GetAccessToken())
+		})
+		route.Group(func(route chi.Router) {
+			route.Use(middleware.AuthorizationCheckMiddleware)
+			route.Use(middleware.VerifyAccessTokenMiddleware)
+			route.Post("/logout", router.hdl.Logout())
+		})
 	})
 }

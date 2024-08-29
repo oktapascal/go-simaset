@@ -30,15 +30,18 @@ type (
 	LoginSessionRepository interface {
 		CreateLoginSession(ctx context.Context, tx *sql.Tx, data *LoginSession)
 		RevokeLoginSession(ctx context.Context, tx *sql.Tx, userId string)
+		CheckRefreshToken(ctx context.Context, tx *sql.Tx, userId string) (*LoginSession, error)
 	}
 
 	LoginSessionService interface {
 		Login(ctx context.Context, request *LoginRequest) LoginResponse
 		Logout(ctx context.Context, claims jwt.MapClaims)
+		GenerateAccessToken(ctx context.Context, claims jwt.MapClaims) LoginResponse
 	}
 
 	LoginSessionHandler interface {
 		Login() http.HandlerFunc
 		Logout() http.HandlerFunc
+		GetAccessToken() http.HandlerFunc
 	}
 )

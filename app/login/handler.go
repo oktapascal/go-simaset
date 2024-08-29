@@ -72,3 +72,27 @@ func (hdl *Handler) Logout() http.HandlerFunc {
 		}
 	}
 }
+
+func (hdl *Handler) GetAccessToken() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		userInfo := request.Context().Value("claims").(jwt.MapClaims)
+
+		ctx := request.Context()
+		result := hdl.svc.GenerateAccessToken(ctx, userInfo)
+
+		svcResponse := web.DefaultResponse{
+			Code:   http.StatusOK,
+			Status: http.StatusText(http.StatusOK),
+			Data:   result,
+		}
+
+		writer.Header().Set("Content-Type", "application/json")
+
+		encoder := json.NewEncoder(writer)
+
+		err := encoder.Encode(svcResponse)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
