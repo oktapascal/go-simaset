@@ -3,6 +3,7 @@ package user
 import (
 	"encoding/json"
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/oktapascal/go-simaset/helper"
 	"github.com/oktapascal/go-simaset/model"
 	"github.com/oktapascal/go-simaset/web"
@@ -42,6 +43,30 @@ func (hdl *Handler) SaveUser() http.HandlerFunc {
 		encoder := json.NewEncoder(writer)
 
 		err = encoder.Encode(svcResponse)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func (hdl *Handler) GetUserByToken() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		userInfo := request.Context().Value("claims").(jwt.MapClaims)
+
+		ctx := request.Context()
+		result := hdl.svc.GetUserByToken(ctx, userInfo)
+
+		svcResponse := web.DefaultResponse{
+			Code:   http.StatusOK,
+			Status: http.StatusText(http.StatusOK),
+			Data:   result,
+		}
+
+		writer.Header().Set("Content-Type", "application/json")
+
+		encoder := json.NewEncoder(writer)
+
+		err := encoder.Encode(svcResponse)
 		if err != nil {
 			panic(err)
 		}

@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"database/sql"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/oktapascal/go-simaset/exception"
 	"github.com/oktapascal/go-simaset/helper"
 	"github.com/oktapascal/go-simaset/model"
@@ -65,5 +66,31 @@ func (svc *Service) SaveUser(ctx context.Context, request *model.SaveUserRequest
 		Name:        user.Name,
 		Phone:       user.Phone,
 		Permissions: permissions,
+	}
+}
+
+func (svc *Service) GetUserByToken(ctx context.Context, claims jwt.MapClaims) model.UserProfileResponse {
+	tx, err := svc.db.Begin()
+	if err != nil {
+		panic(err)
+	}
+
+	defer helper.CommitRollback(tx)
+
+	username, ok := claims["sub"].(string)
+	if !ok {
+		panic("Something wrong when extracting username from jwt token")
+	}
+
+	user, errUser := svc.rpo.FindByUsername(ctx, tx, username)
+	if errUser != nil {
+		panic(exception.NewNotFoundError(errUser.Error()))
+	}
+
+	return model.UserProfileResponse{
+		Username: user.Username,
+		Email:    user.Email,
+		Name:     user.Name,
+		Phone:    user.Phone,
 	}
 }

@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"time"
 )
@@ -49,6 +50,13 @@ type (
 		Permissions []UserPermission `json:"permissions"`
 	}
 
+	UserProfileResponse struct {
+		Username string `json:"username"`
+		Email    string `json:"email"`
+		Name     string `json:"name"`
+		Phone    string `json:"phone"`
+	}
+
 	UserRepository interface {
 		FindByEmail(ctx context.Context, tx *sql.Tx, email string) (*User, error)
 		FindByUsername(ctx context.Context, tx *sql.Tx, username string) (*User, error)
@@ -59,9 +67,11 @@ type (
 
 	UserService interface {
 		SaveUser(ctx context.Context, request *SaveUserRequest) UserResponse
+		GetUserByToken(ctx context.Context, claims jwt.MapClaims) UserProfileResponse
 	}
 
 	UserHandler interface {
 		SaveUser() http.HandlerFunc
+		GetUserByToken() http.HandlerFunc
 	}
 )
