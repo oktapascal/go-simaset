@@ -96,9 +96,18 @@ func (svc *Service) Login(ctx context.Context, request *model.LoginRequest) mode
 
 	svc.rpo.CreateLoginSession(ctx, tx, session)
 
+	userResponse := model.UserResponse{
+		Username:    user.Username,
+		Email:       user.Email,
+		Name:        user.Name,
+		Phone:       user.Phone,
+		Permissions: *listUserPermissions,
+	}
+
 	return model.LoginResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		User:         userResponse,
 	}
 }
 
