@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/oktapascal/go-simaset/exception"
-	"github.com/oktapascal/go-simaset/helper"
-	"github.com/oktapascal/go-simaset/model"
+	"github.com/oktapascal/go-simpro/exception"
+	"github.com/oktapascal/go-simpro/helper"
+	"github.com/oktapascal/go-simpro/model"
 )
 
 type Service struct {

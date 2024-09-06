@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-playground/validator/v10"
-	"github.com/oktapascal/go-simaset/web"
+	"github.com/oktapascal/go-simpro/web"
 	"net/http"
 )
 

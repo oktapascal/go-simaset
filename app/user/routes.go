@@ -2,8 +2,8 @@ package user
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/oktapascal/go-simaset/middleware"
-	"github.com/oktapascal/go-simaset/model"
+	"github.com/oktapascal/go-simpro/middleware"
+	"github.com/oktapascal/go-simpro/model"
 )
 
 type Router struct {

@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"context"
-	"github.com/oktapascal/go-simaset/helper"
+	"github.com/oktapascal/go-simpro/helper"
 	"net/http"
 	"strings"
 )

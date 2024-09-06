@@ -1,4 +1,4 @@
-module github.com/oktapascal/go-simaset
+module github.com/oktapascal/go-simpro
 
 go 1.23.0
 

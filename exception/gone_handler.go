@@ -2,8 +2,8 @@ package exception
 
 import (
 	"encoding/json"
-	"github.com/oktapascal/go-simaset/config"
-	"github.com/oktapascal/go-simaset/web"
+	"github.com/oktapascal/go-simpro/config"
+	"github.com/oktapascal/go-simpro/web"
 	"net/http"
 )
 

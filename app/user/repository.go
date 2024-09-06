@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/oktapascal/go-simaset/model"
+	"github.com/oktapascal/go-simpro/model"
 )
 
 type Repository struct {

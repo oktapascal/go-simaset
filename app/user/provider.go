@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/wire"
-	"github.com/oktapascal/go-simaset/model"
+	"github.com/oktapascal/go-simpro/model"
 	"sync"
 )
 

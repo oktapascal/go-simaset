@@ -9,7 +9,7 @@ package login
 import (
 	"database/sql"
 	"github.com/go-playground/validator/v10"
-	"github.com/oktapascal/go-simaset/app/user"
+	"github.com/oktapascal/go-simpro/app/user"
 )
 
 // Injectors from wire.go:

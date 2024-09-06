@@ -2,7 +2,7 @@ package helper
 
 import (
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/oktapascal/go-simaset/config"
+	"github.com/oktapascal/go-simpro/config"
 	"github.com/spf13/viper"
 	"time"
 )

@@ -3,7 +3,7 @@ package middleware
 import (
 	"errors"
 	"github.com/go-playground/validator/v10"
-	"github.com/oktapascal/go-simaset/exception"
+	"github.com/oktapascal/go-simpro/exception"
 	"net/http"
 )
 

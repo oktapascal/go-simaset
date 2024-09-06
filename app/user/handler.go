@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/oktapascal/go-simaset/helper"
-	"github.com/oktapascal/go-simaset/model"
-	"github.com/oktapascal/go-simaset/web"
+	"github.com/oktapascal/go-simpro/helper"
+	"github.com/oktapascal/go-simpro/model"
+	"github.com/oktapascal/go-simpro/web"
 	"net/http"
 )
 

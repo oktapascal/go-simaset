@@ -1,7 +1,7 @@
 package welcome
 
 import (
-	"github.com/oktapascal/go-simaset/exception"
+	"github.com/oktapascal/go-simpro/exception"
 	"github.com/spf13/viper"
 	"net/http"
 )

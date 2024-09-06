@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/oktapascal/go-simaset/config"
+	"github.com/oktapascal/go-simpro/config"
 	"net/http"
 )
 

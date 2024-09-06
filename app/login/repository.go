@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/oktapascal/go-simaset/model"
+	"github.com/oktapascal/go-simpro/model"
 )
 
 type Repository struct {
