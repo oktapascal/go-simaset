@@ -8,7 +8,7 @@ import (
 )
 
 type ForbiddenError struct {
-	Error string
+	Error string `json:"error"`
 }
 
 func NewForbiddenError(error string) ForbiddenError {

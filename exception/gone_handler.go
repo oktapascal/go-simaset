@@ -8,7 +8,7 @@ import (
 )
 
 type GoneError struct {
-	Error string
+	Error string `json:"error"`
 }
 
 func NewGoneError(error string) GoneError {

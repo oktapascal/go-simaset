@@ -8,7 +8,7 @@ import (
 )
 
 type NotMatchedError struct {
-	Error string
+	Error string `json:"error"`
 }
 
 func NewNotMatchedError(error string) NotMatchedError {

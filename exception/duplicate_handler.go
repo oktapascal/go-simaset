@@ -8,7 +8,7 @@ import (
 )
 
 type DuplicateError struct {
-	Error string
+	Error string `json:"error"`
 }
 
 func NewDuplicateError(error string) DuplicateError {

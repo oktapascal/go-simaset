@@ -8,7 +8,7 @@ import (
 )
 
 type NotFoundError struct {
-	Error string
+	Error string `json:"error"`
 }
 
 func NewNotFoundError(error string) NotFoundError {

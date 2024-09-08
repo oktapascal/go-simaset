@@ -8,7 +8,7 @@ import (
 )
 
 type PermissionError struct {
-	Error string
+	Error string `json:"error"`
 }
 
 func NewPermissionError(error string) PermissionError {
