@@ -22,9 +22,9 @@ type (
 	}
 
 	UserPermission struct {
-		UserId       string
-		PermissionId string
-		StatusPermit bool
+		UserId       string `json:"user_id"`
+		PermissionId string `json:"permission_id"`
+		StatusPermit bool   `json:"status_permit"`
 	}
 
 	userPermissionRequest struct {
