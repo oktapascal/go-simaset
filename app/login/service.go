@@ -132,7 +132,7 @@ func (svc *Service) Logout(ctx context.Context, claims jwt.MapClaims) {
 	svc.rpo.RevokeLoginSession(ctx, tx, user.Id)
 }
 
-func (svc *Service) GenerateAccessToken(ctx context.Context, claims jwt.MapClaims) model.LoginResponse {
+func (svc *Service) GenerateAccessToken(ctx context.Context, claims jwt.MapClaims) model.AccessTokenResponse {
 	tx, err := svc.db.Begin()
 	if err != nil {
 		panic(err)
@@ -192,7 +192,7 @@ func (svc *Service) GenerateAccessToken(ctx context.Context, claims jwt.MapClaim
 		panic(errAccessToken)
 	}
 
-	return model.LoginResponse{
+	return model.AccessTokenResponse{
 		AccessToken:  accessToken,
 		RefreshToken: session.RefreshToken,
 	}

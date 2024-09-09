@@ -28,6 +28,11 @@ type (
 		User         UserResponse `json:"user"`
 	}
 
+	AccessTokenResponse struct {
+		AccessToken  string `json:"access_token"`
+		RefreshToken string `json:"refresh_token"`
+	}
+
 	LoginSessionRepository interface {
 		CreateLoginSession(ctx context.Context, tx *sql.Tx, data *LoginSession)
 		RevokeLoginSession(ctx context.Context, tx *sql.Tx, userId string)
@@ -37,7 +42,7 @@ type (
 	LoginSessionService interface {
 		Login(ctx context.Context, request *LoginRequest) LoginResponse
 		Logout(ctx context.Context, claims jwt.MapClaims)
-		GenerateAccessToken(ctx context.Context, claims jwt.MapClaims) LoginResponse
+		GenerateAccessToken(ctx context.Context, claims jwt.MapClaims) AccessTokenResponse
 	}
 
 	LoginSessionHandler interface {
