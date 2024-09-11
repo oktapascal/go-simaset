@@ -22,15 +22,25 @@ type (
 		Password   string `validate:"required" json:"password"`
 	}
 
+	AccessToken struct {
+		Token     string `json:"token"`
+		ExpiresAt int64  `json:"expires_at"`
+	}
+
+	RefreshToken struct {
+		Token     string `json:"token"`
+		ExpiresAt int64  `json:"expires_at"`
+	}
+
 	LoginResponse struct {
-		AccessToken  string       `json:"access_token"`
-		RefreshToken string       `json:"refresh_token"`
+		AccessToken  AccessToken  `json:"access_token"`
+		RefreshToken RefreshToken `json:"refresh_token"`
 		User         UserResponse `json:"user"`
 	}
 
-	AccessTokenResponse struct {
-		AccessToken  string `json:"access_token"`
-		RefreshToken string `json:"refresh_token"`
+	TokenResponse struct {
+		AccessToken  AccessToken  `json:"access_token"`
+		RefreshToken RefreshToken `json:"refresh_token"`
 	}
 
 	LoginSessionRepository interface {
@@ -42,7 +52,7 @@ type (
 	LoginSessionService interface {
 		Login(ctx context.Context, request *LoginRequest) LoginResponse
 		Logout(ctx context.Context, claims jwt.MapClaims)
-		GenerateAccessToken(ctx context.Context, claims jwt.MapClaims) AccessTokenResponse
+		GenerateAccessToken(ctx context.Context, claims jwt.MapClaims) TokenResponse
 	}
 
 	LoginSessionHandler interface {

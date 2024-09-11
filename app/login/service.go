@@ -104,9 +104,19 @@ func (svc *Service) Login(ctx context.Context, request *model.LoginRequest) mode
 		Permissions: *listUserPermissions,
 	}
 
+	accessTokenModel := model.AccessToken{
+		Token:     accessToken,
+		ExpiresAt: helper.GetTime().Add(15 * time.Minute).Unix(),
+	}
+
+	refreshTokenModel := model.RefreshToken{
+		Token:     refreshToken,
+		ExpiresAt: helper.GetTime().Add(7 * (24 * time.Hour)).Unix(),
+	}
+
 	return model.LoginResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		AccessToken:  accessTokenModel,
+		RefreshToken: refreshTokenModel,
 		User:         userResponse,
 	}
 }
@@ -132,7 +142,7 @@ func (svc *Service) Logout(ctx context.Context, claims jwt.MapClaims) {
 	svc.rpo.RevokeLoginSession(ctx, tx, user.Id)
 }
 
-func (svc *Service) GenerateAccessToken(ctx context.Context, claims jwt.MapClaims) model.AccessTokenResponse {
+func (svc *Service) GenerateAccessToken(ctx context.Context, claims jwt.MapClaims) model.TokenResponse {
 	tx, err := svc.db.Begin()
 	if err != nil {
 		panic(err)
@@ -192,8 +202,18 @@ func (svc *Service) GenerateAccessToken(ctx context.Context, claims jwt.MapClaim
 		panic(errAccessToken)
 	}
 
-	return model.AccessTokenResponse{
-		AccessToken:  accessToken,
-		RefreshToken: session.RefreshToken,
+	accessTokenModel := model.AccessToken{
+		Token:     accessToken,
+		ExpiresAt: helper.GetTime().Add(15 * time.Minute).Unix(),
+	}
+
+	refreshTokenModel := model.RefreshToken{
+		Token:     session.RefreshToken,
+		ExpiresAt: session.ExpiresAt.Unix(),
+	}
+
+	return model.TokenResponse{
+		AccessToken:  accessTokenModel,
+		RefreshToken: refreshTokenModel,
 	}
 }
