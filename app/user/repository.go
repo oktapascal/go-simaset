@@ -155,3 +155,14 @@ func (rpo *Repository) FindPermissionUser(ctx context.Context, tx *sql.Tx, userI
 
 	return &userPermissions
 }
+
+func (rpo *Repository) UpdateUser(ctx context.Context, tx *sql.Tx, data *model.User) *model.User {
+	query := "update users set name = ?, phone = ? where username = ?"
+
+	_, err := tx.ExecContext(ctx, query, data.Name, data.Phone, data.Username)
+	if err != nil {
+		panic(err)
+	}
+
+	return data
+}

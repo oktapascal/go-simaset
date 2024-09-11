@@ -42,6 +42,11 @@ type (
 		Permissions          []userPermissionRequest `json:"permissions" validate:"dive"`
 	}
 
+	UpdateUserRequest struct {
+		Name  string `json:"name" validate:"required,min=1,max=50"`
+		Phone string `json:"phone" validate:"required,min=11,max=13"`
+	}
+
 	UserResponse struct {
 		Username    string           `json:"username"`
 		Email       string           `json:"email"`
@@ -63,15 +68,18 @@ type (
 		CreateUser(ctx context.Context, tx *sql.Tx, data *User) *User
 		CreateUserPermission(ctx context.Context, tx *sql.Tx, data *[]UserPermission)
 		FindPermissionUser(ctx context.Context, tx *sql.Tx, userId string) *[]UserPermission
+		UpdateUser(ctx context.Context, tx *sql.Tx, data *User) *User
 	}
 
 	UserService interface {
 		SaveUser(ctx context.Context, request *SaveUserRequest) UserResponse
 		GetUserByToken(ctx context.Context, claims jwt.MapClaims) UserProfileResponse
+		EditUser(ctx context.Context, request *UpdateUserRequest, claims jwt.MapClaims) UserProfileResponse
 	}
 
 	UserHandler interface {
 		SaveUser() http.HandlerFunc
 		GetUserByToken() http.HandlerFunc
+		EditUser() http.HandlerFunc
 	}
 )

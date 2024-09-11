@@ -94,3 +94,34 @@ func (svc *Service) GetUserByToken(ctx context.Context, claims jwt.MapClaims) mo
 		Phone:    user.Phone,
 	}
 }
+
+func (svc *Service) EditUser(ctx context.Context, request *model.UpdateUserRequest, claims jwt.MapClaims) model.UserProfileResponse {
+	tx, err := svc.db.Begin()
+	if err != nil {
+		panic(err)
+	}
+
+	defer helper.CommitRollback(tx)
+
+	username, ok := claims["sub"].(string)
+	if !ok {
+		panic("Something wrong when extracting username from jwt token")
+	}
+
+	user, errUser := svc.rpo.FindByUsername(ctx, tx, username)
+	if errUser != nil {
+		panic(exception.NewNotFoundError(errUser.Error()))
+	}
+
+	user.Name = request.Name
+	user.Phone = request.Phone
+
+	user = svc.rpo.UpdateUser(ctx, tx, user)
+
+	return model.UserProfileResponse{
+		Username: user.Username,
+		Email:    user.Email,
+		Name:     user.Name,
+		Phone:    user.Phone,
+	}
+}
