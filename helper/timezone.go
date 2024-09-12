@@ -1,12 +1,11 @@
 package helper
 
 import (
-	"github.com/spf13/viper"
 	"time"
 )
 
 func getTimezone() *time.Location {
-	location, err := time.LoadLocation(viper.GetString("TZ"))
+	location, err := time.LoadLocation("Asia/Jakarta")
 	if err != nil {
 		panic(err)
 	}
