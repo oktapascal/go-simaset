@@ -7,13 +7,15 @@ import (
 	"time"
 )
 
-func GenerateAccessToken(parameters *config.JwtParameters) (string, error) {
+func GenerateAccessToken(parameters *config.JwtParameters) (string, int64, error) {
+	expiresAt := time.Now().Add(15 * time.Minute).Unix()
+
 	token := config.GenerateToken(jwt.MapClaims{
 		"iss":          viper.GetString("APP_NAME"),
 		"sub":          parameters.Username,
 		"aud":          parameters.Email,
-		"exp":          GetTime().Add(15 * time.Minute).Unix(),
-		"iat":          GetTime().Unix(),
+		"exp":          expiresAt,
+		"iat":          time.Now().Unix(),
 		"id":           parameters.Id,
 		"flag_create":  parameters.FlagCreate,
 		"flag_read":    parameters.FlagRead,
@@ -24,19 +26,21 @@ func GenerateAccessToken(parameters *config.JwtParameters) (string, error) {
 
 	tokenString, err := token.SignedString([]byte(viper.GetString("JWT_SIGNATURE_KEY")))
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
-	return tokenString, nil
+	return tokenString, expiresAt, nil
 }
 
-func GenerateRefreshToken(parameters *config.JwtParameters) (string, error) {
+func GenerateRefreshToken(parameters *config.JwtParameters) (string, int64, error) {
+	expiresAt := time.Now().Add(7 * (24 * time.Hour)).Unix()
+
 	token := config.GenerateToken(jwt.MapClaims{
 		"iss":         viper.GetString("APP_NAME"),
 		"sub":         parameters.Username,
 		"aud":         parameters.Email,
-		"exp":         GetTime().Add(7 * (24 * time.Hour)).Unix(),
-		"iat":         GetTime().Unix(),
+		"exp":         expiresAt,
+		"iat":         time.Now().Unix(),
 		"flag_create": parameters.FlagCreate,
 		"flag_read":   parameters.FlagRead,
 		"flag_update": parameters.FlagUpdate,
@@ -45,10 +49,10 @@ func GenerateRefreshToken(parameters *config.JwtParameters) (string, error) {
 
 	tokenString, err := token.SignedString([]byte(viper.GetString("JWT_REFRESH_SIGNATURE_KEY")))
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
-	return tokenString, nil
+	return tokenString, expiresAt, nil
 }
 
 func VerifyAccessToken(tokenString string) (*jwt.Token, error) {

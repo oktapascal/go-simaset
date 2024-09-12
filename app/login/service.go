@@ -77,12 +77,12 @@ func (svc *Service) Login(ctx context.Context, request *model.LoginRequest) mode
 		FlagApprove: flagApprove,
 	}
 
-	accessToken, errAccessToken := helper.GenerateAccessToken(&jwtParams)
+	accessToken, expiresAccessToken, errAccessToken := helper.GenerateAccessToken(&jwtParams)
 	if errAccessToken != nil {
 		panic(errAccessToken)
 	}
 
-	refreshToken, errRefreshToken := helper.GenerateRefreshToken(&jwtParams)
+	refreshToken, expiresRefreshToken, errRefreshToken := helper.GenerateRefreshToken(&jwtParams)
 	if errRefreshToken != nil {
 		panic(errRefreshToken)
 	}
@@ -91,7 +91,10 @@ func (svc *Service) Login(ctx context.Context, request *model.LoginRequest) mode
 	session.UserId = user.Id
 	session.RefreshToken = refreshToken
 
-	expiresAt := helper.GetTime().Add(7 * (24 * time.Hour))
+	unixFormat := expiresRefreshToken
+	t := time.Unix(unixFormat, 0)
+	formattedDateTime := t.Format("2006-01-02 15:04:05")
+	expiresAt, _ := time.Parse("2006-01-02 15:04:05", formattedDateTime)
 	session.ExpiresAt = expiresAt
 
 	svc.rpo.CreateLoginSession(ctx, tx, session)
@@ -106,12 +109,12 @@ func (svc *Service) Login(ctx context.Context, request *model.LoginRequest) mode
 
 	accessTokenModel := model.AccessToken{
 		Token:     accessToken,
-		ExpiresAt: helper.GetTime().Add(15 * time.Minute).Unix(),
+		ExpiresAt: expiresAccessToken,
 	}
 
 	refreshTokenModel := model.RefreshToken{
 		Token:     refreshToken,
-		ExpiresAt: helper.GetTime().Add(7 * (24 * time.Hour)).Unix(),
+		ExpiresAt: expiresRefreshToken,
 	}
 
 	return model.LoginResponse{
@@ -197,14 +200,14 @@ func (svc *Service) GenerateAccessToken(ctx context.Context, claims jwt.MapClaim
 		FlagDelete: flagDelete,
 	}
 
-	accessToken, errAccessToken := helper.GenerateAccessToken(&jwtParams)
+	accessToken, expiresAccessToken, errAccessToken := helper.GenerateAccessToken(&jwtParams)
 	if errAccessToken != nil {
 		panic(errAccessToken)
 	}
 
 	accessTokenModel := model.AccessToken{
 		Token:     accessToken,
-		ExpiresAt: helper.GetTime().Add(15 * time.Minute).Unix(),
+		ExpiresAt: expiresAccessToken,
 	}
 
 	refreshTokenModel := model.RefreshToken{
