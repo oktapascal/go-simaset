@@ -92,6 +92,7 @@ func (svc *Service) GetUserByToken(ctx context.Context, claims jwt.MapClaims) mo
 		Email:    user.Email,
 		Name:     user.Name,
 		Phone:    user.Phone,
+		Photo:    user.Avatar,
 	}
 }
 
@@ -123,6 +124,7 @@ func (svc *Service) EditUser(ctx context.Context, request *model.UpdateUserReque
 		Email:    user.Email,
 		Name:     user.Name,
 		Phone:    user.Phone,
+		Photo:    user.Avatar,
 	}
 }
 
@@ -145,4 +147,35 @@ func (svc *Service) GetUserIdByToken(ctx context.Context, claims jwt.MapClaims) 
 	}
 
 	return user.Id
+}
+
+func (svc *Service) EditPhotoUser(ctx context.Context, fileName string, claims jwt.MapClaims) model.UserProfileResponse {
+	tx, err := svc.db.Begin()
+	if err != nil {
+		panic(err)
+	}
+
+	defer helper.CommitRollback(tx)
+
+	username, ok := claims["sub"].(string)
+	if !ok {
+		panic("Something wrong when extracting username from jwt token")
+	}
+
+	user, errUser := svc.rpo.FindByUsername(ctx, tx, username)
+	if errUser != nil {
+		panic(exception.NewNotFoundError(errUser.Error()))
+	}
+
+	user.Avatar = fileName
+
+	user = svc.rpo.UpdatePhotoUser(ctx, tx, user)
+
+	return model.UserProfileResponse{
+		Username: user.Username,
+		Email:    user.Email,
+		Name:     user.Email,
+		Phone:    user.Phone,
+		Photo:    user.Avatar,
+	}
 }

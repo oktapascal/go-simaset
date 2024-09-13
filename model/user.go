@@ -60,6 +60,7 @@ type (
 		Email    string `json:"email"`
 		Name     string `json:"name"`
 		Phone    string `json:"phone"`
+		Photo    string `json:"photo"`
 	}
 
 	UserRepository interface {
@@ -69,6 +70,7 @@ type (
 		CreateUserPermission(ctx context.Context, tx *sql.Tx, data *[]UserPermission)
 		FindPermissionUser(ctx context.Context, tx *sql.Tx, userId string) *[]UserPermission
 		UpdateUser(ctx context.Context, tx *sql.Tx, data *User) *User
+		UpdatePhotoUser(ctx context.Context, tx *sql.Tx, data *User) *User
 	}
 
 	UserService interface {
@@ -76,6 +78,7 @@ type (
 		GetUserByToken(ctx context.Context, claims jwt.MapClaims) UserProfileResponse
 		GetUserIdByToken(ctx context.Context, claims jwt.MapClaims) string
 		EditUser(ctx context.Context, request *UpdateUserRequest, claims jwt.MapClaims) UserProfileResponse
+		EditPhotoUser(ctx context.Context, fileName string, claims jwt.MapClaims) UserProfileResponse
 	}
 
 	UserHandler interface {

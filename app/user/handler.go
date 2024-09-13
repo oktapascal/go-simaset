@@ -159,7 +159,8 @@ func (hdl *Handler) UploadPhotoProfile() http.HandlerFunc {
 			}
 		}
 
-		dst, errCreate := os.Create(filepath.Join("storage", "applications", userId, header.Filename))
+		fileName := "my-photo" + filepath.Ext(header.Filename)
+		dst, errCreate := os.Create(filepath.Join("storage", "applications", userId, fileName))
 		if errCreate != nil {
 			panic(errCreate.Error())
 		}
@@ -176,10 +177,12 @@ func (hdl *Handler) UploadPhotoProfile() http.HandlerFunc {
 			panic(errCopy.Error())
 		}
 
+		result := hdl.svc.EditPhotoUser(ctx, fileName, userInfo)
+
 		svcResponse := web.DefaultResponse{
 			Code:   http.StatusOK,
 			Status: http.StatusText(http.StatusOK),
-			Data:   nil,
+			Data:   result,
 		}
 
 		writer.Header().Set("Content-Type", "application/json")

@@ -166,3 +166,14 @@ func (rpo *Repository) UpdateUser(ctx context.Context, tx *sql.Tx, data *model.U
 
 	return data
 }
+
+func (rpo *Repository) UpdatePhotoUser(ctx context.Context, tx *sql.Tx, data *model.User) *model.User {
+	query := "update users set avatar = ? where username = ?"
+
+	_, err := tx.ExecContext(ctx, query, data.Avatar, data.Username)
+	if err != nil {
+		panic(err)
+	}
+
+	return data
+}
