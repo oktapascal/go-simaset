@@ -211,6 +211,9 @@ func (hdl *Handler) GetPhotoProfile() http.HandlerFunc {
 			panic(exception.NewNotFoundError("file not found"))
 		}
 
+		writer.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		writer.Header().Set("Pragma", "no-cache")
+
 		http.ServeFile(writer, request, path)
 	}
 }
