@@ -65,6 +65,7 @@ func (svc *Service) SaveUser(ctx context.Context, request *model.SaveUserRequest
 		Email:       user.Email,
 		Name:        user.Name,
 		Phone:       user.Phone,
+		Photo:       user.Avatar,
 		Permissions: permissions,
 	}
 }

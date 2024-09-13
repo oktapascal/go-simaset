@@ -104,6 +104,7 @@ func (svc *Service) Login(ctx context.Context, request *model.LoginRequest) mode
 		Email:       user.Email,
 		Name:        user.Name,
 		Phone:       user.Phone,
+		Photo:       user.Avatar,
 		Permissions: *listUserPermissions,
 	}
 
