@@ -63,6 +63,15 @@ type (
 		Photo    string `json:"photo"`
 	}
 
+	UserProfileWithIDResponse struct {
+		Id       string `json:"id"`
+		Username string `json:"username"`
+		Email    string `json:"email"`
+		Name     string `json:"name"`
+		Phone    string `json:"phone"`
+		Photo    string `json:"photo"`
+	}
+
 	UserRepository interface {
 		FindByEmail(ctx context.Context, tx *sql.Tx, email string) (*User, error)
 		FindByUsername(ctx context.Context, tx *sql.Tx, username string) (*User, error)
@@ -77,6 +86,7 @@ type (
 		SaveUser(ctx context.Context, request *SaveUserRequest) UserResponse
 		GetUserByToken(ctx context.Context, claims jwt.MapClaims) UserProfileResponse
 		GetUserIdByToken(ctx context.Context, claims jwt.MapClaims) string
+		GetUserByUsername(ctx context.Context, username string) UserProfileWithIDResponse
 		EditUser(ctx context.Context, request *UpdateUserRequest, claims jwt.MapClaims) UserProfileResponse
 		EditPhotoUser(ctx context.Context, fileName string, claims jwt.MapClaims) UserProfileResponse
 	}
@@ -86,5 +96,6 @@ type (
 		GetUserByToken() http.HandlerFunc
 		EditUser() http.HandlerFunc
 		UploadPhotoProfile() http.HandlerFunc
+		GetPhotoProfile() http.HandlerFunc
 	}
 )

@@ -12,11 +12,15 @@ type Router struct {
 
 func (router *Router) InitializeRoute(mux *chi.Mux) {
 	mux.Route("/api/user", func(route chi.Router) {
-		route.Use(middleware.AuthorizationCheckMiddleware)
-		route.Use(middleware.VerifyAccessTokenMiddleware)
-		route.Get("/with-token", router.hdl.GetUserByToken())
-		route.Post("/", router.hdl.SaveUser())
-		route.Put("/", router.hdl.EditUser())
-		route.Post("/upload-photo", router.hdl.UploadPhotoProfile())
+		route.Get("/{username}/profile-photo", router.hdl.GetPhotoProfile())
+
+		route.Group(func(route chi.Router) {
+			route.Use(middleware.AuthorizationCheckMiddleware)
+			route.Use(middleware.VerifyAccessTokenMiddleware)
+			route.Get("/with-token", router.hdl.GetUserByToken())
+			route.Post("/", router.hdl.SaveUser())
+			route.Put("/", router.hdl.EditUser())
+			route.Post("/upload-photo", router.hdl.UploadPhotoProfile())
+		})
 	})
 }

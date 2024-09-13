@@ -179,3 +179,26 @@ func (svc *Service) EditPhotoUser(ctx context.Context, fileName string, claims j
 		Photo:    user.Avatar,
 	}
 }
+
+func (svc *Service) GetUserByUsername(ctx context.Context, username string) model.UserProfileWithIDResponse {
+	tx, err := svc.db.Begin()
+	if err != nil {
+		panic(err)
+	}
+
+	defer helper.CommitRollback(tx)
+
+	user, errUser := svc.rpo.FindByUsername(ctx, tx, username)
+	if errUser != nil {
+		panic(exception.NewNotFoundError(errUser.Error()))
+	}
+
+	return model.UserProfileWithIDResponse{
+		Id:       user.Id,
+		Username: user.Username,
+		Email:    user.Email,
+		Name:     user.Name,
+		Phone:    user.Phone,
+		Photo:    user.Avatar,
+	}
+}

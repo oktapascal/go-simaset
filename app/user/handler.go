@@ -2,6 +2,7 @@ package user
 
 import (
 	"encoding/json"
+	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/oktapascal/go-simpro/exception"
@@ -128,12 +129,12 @@ func (hdl *Handler) UploadPhotoProfile() http.HandlerFunc {
 
 		err := request.ParseMultipartForm(MaxSize)
 		if err != nil {
-			panic(exception.NewUploadFileError("File yang diupload melebihi 2 mb"))
+			panic(exception.NewUploadFileError("file exceeds 2mb"))
 		}
 
 		file, header, errFile := request.FormFile("photo")
 		if errFile != nil {
-			panic(exception.NewUploadFileError("Gagal mengambil file"))
+			panic(exception.NewUploadFileError("failed to retrieve file"))
 		}
 
 		defer func(file multipart.File) {
@@ -146,7 +147,7 @@ func (hdl *Handler) UploadPhotoProfile() http.HandlerFunc {
 		fileExt := strings.ToLower(filepath.Ext(header.Filename))
 
 		if !(fileExt == ".png" || fileExt == ".jpg" || fileExt == ".jpeg") {
-			panic(exception.NewUploadFileError("Format file tidak sesuai dengan yang ditetapkan"))
+			panic(exception.NewUploadFileError("file format does not support image format"))
 		}
 
 		_, err = os.Stat("storage/applications/" + userId)
@@ -193,5 +194,23 @@ func (hdl *Handler) UploadPhotoProfile() http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+	}
+}
+
+func (hdl *Handler) GetPhotoProfile() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		username := chi.URLParam(request, "username")
+
+		ctx := request.Context()
+		user := hdl.svc.GetUserByUsername(ctx, username)
+
+		path := filepath.Join("storage", "applications", user.Id, user.Photo)
+
+		_, err := os.Stat(path)
+		if err != nil {
+			panic(exception.NewNotFoundError("file not found"))
+		}
+
+		http.ServeFile(writer, request, path)
 	}
 }
