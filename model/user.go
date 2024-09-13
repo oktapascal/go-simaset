@@ -74,6 +74,7 @@ type (
 	UserService interface {
 		SaveUser(ctx context.Context, request *SaveUserRequest) UserResponse
 		GetUserByToken(ctx context.Context, claims jwt.MapClaims) UserProfileResponse
+		GetUserIdByToken(ctx context.Context, claims jwt.MapClaims) string
 		EditUser(ctx context.Context, request *UpdateUserRequest, claims jwt.MapClaims) UserProfileResponse
 	}
 
@@ -81,5 +82,6 @@ type (
 		SaveUser() http.HandlerFunc
 		GetUserByToken() http.HandlerFunc
 		EditUser() http.HandlerFunc
+		UploadPhotoProfile() http.HandlerFunc
 	}
 )

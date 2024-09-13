@@ -41,6 +41,11 @@ func RecoverMiddleware(next http.Handler) http.Handler {
 					return
 				}
 
+				if str, ok := err.(exception.UploadFileError); ok {
+					exception.UploadHandler(writer, str)
+					return
+				}
+
 				if str, ok := err.(string); ok {
 					exception.InternalServerHandler(writer, str)
 					return

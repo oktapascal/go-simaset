@@ -125,3 +125,24 @@ func (svc *Service) EditUser(ctx context.Context, request *model.UpdateUserReque
 		Phone:    user.Phone,
 	}
 }
+
+func (svc *Service) GetUserIdByToken(ctx context.Context, claims jwt.MapClaims) string {
+	tx, err := svc.db.Begin()
+	if err != nil {
+		panic(err)
+	}
+
+	defer helper.CommitRollback(tx)
+
+	username, ok := claims["sub"].(string)
+	if !ok {
+		panic("Something wrong when extracting username from jwt token")
+	}
+
+	user, errUser := svc.rpo.FindByUsername(ctx, tx, username)
+	if errUser != nil {
+		panic(exception.NewNotFoundError(errUser.Error()))
+	}
+
+	return user.Id
+}

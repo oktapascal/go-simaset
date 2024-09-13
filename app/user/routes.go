@@ -17,5 +17,6 @@ func (router *Router) InitializeRoute(mux *chi.Mux) {
 		route.Get("/with-token", router.hdl.GetUserByToken())
 		route.Post("/", router.hdl.SaveUser())
 		route.Put("/", router.hdl.EditUser())
+		route.Post("/upload-photo", router.hdl.UploadPhotoProfile())
 	})
 }

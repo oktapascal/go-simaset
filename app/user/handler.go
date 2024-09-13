@@ -4,10 +4,17 @@ import (
 	"encoding/json"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/oktapascal/go-simpro/exception"
 	"github.com/oktapascal/go-simpro/helper"
 	"github.com/oktapascal/go-simpro/model"
 	"github.com/oktapascal/go-simpro/web"
+	"io"
+	"log"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 type Handler struct {
@@ -95,6 +102,84 @@ func (hdl *Handler) EditUser() http.HandlerFunc {
 			Code:   http.StatusOK,
 			Status: http.StatusText(http.StatusOK),
 			Data:   result,
+		}
+
+		writer.Header().Set("Content-Type", "application/json")
+
+		encoder := json.NewEncoder(writer)
+
+		err = encoder.Encode(svcResponse)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func (hdl *Handler) UploadPhotoProfile() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		userInfo := request.Context().Value("claims").(jwt.MapClaims)
+
+		ctx := request.Context()
+		userId := hdl.svc.GetUserIdByToken(ctx, userInfo)
+
+		const MaxSize = 2 * 1024 * 1024
+
+		request.Body = http.MaxBytesReader(writer, request.Body, MaxSize)
+
+		err := request.ParseMultipartForm(MaxSize)
+		if err != nil {
+			panic(exception.NewUploadFileError("File yang diupload melebihi 2 mb"))
+		}
+
+		file, header, errFile := request.FormFile("photo")
+		if errFile != nil {
+			panic(exception.NewUploadFileError("Gagal mengambil file"))
+		}
+
+		defer func(file multipart.File) {
+			err := file.Close()
+			if err != nil {
+				panic(err.Error())
+			}
+		}(file)
+
+		fileExt := strings.ToLower(filepath.Ext(header.Filename))
+
+		if !(fileExt == ".png" || fileExt == ".jpg" || fileExt == ".jpeg") {
+			panic(exception.NewUploadFileError("Format file tidak sesuai dengan yang ditetapkan"))
+		}
+
+		_, err = os.Stat("storage/applications/" + userId)
+		if err != nil {
+			if os.IsNotExist(err) {
+				errMkdir := os.Mkdir("storage/applications/"+userId, os.ModePerm)
+				if errMkdir != nil {
+					log.Fatal(errMkdir)
+				}
+			}
+		}
+
+		dst, errCreate := os.Create(filepath.Join("storage", "applications", userId, header.Filename))
+		if errCreate != nil {
+			panic(errCreate.Error())
+		}
+
+		defer func(dst *os.File) {
+			err := dst.Close()
+			if err != nil {
+				panic(err.Error())
+			}
+		}(dst)
+
+		_, errCopy := io.Copy(dst, file)
+		if errCopy != nil {
+			panic(errCopy.Error())
+		}
+
+		svcResponse := web.DefaultResponse{
+			Code:   http.StatusOK,
+			Status: http.StatusText(http.StatusOK),
+			Data:   nil,
 		}
 
 		writer.Header().Set("Content-Type", "application/json")

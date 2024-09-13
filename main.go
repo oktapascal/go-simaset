@@ -11,6 +11,7 @@ import (
 	"github.com/oktapascal/go-simpro/middleware"
 	"github.com/spf13/viper"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -21,6 +22,16 @@ func main() {
 	db, err := config.ConnectDB()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	_, err = os.Stat("storage/applications")
+	if err != nil {
+		if os.IsNotExist(err) {
+			errMkdir := os.Mkdir("storage/applications", os.ModePerm)
+			if errMkdir != nil {
+				log.Fatal(errMkdir)
+			}
+		}
 	}
 
 	router := chi.NewRouter()
