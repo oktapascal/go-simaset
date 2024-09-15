@@ -19,7 +19,7 @@ type (
 		Address  string
 	}
 
-	saveClientPicRequest struct {
+	SaveClientPicRequest struct {
 		Name    string `json:"name" validate:"required,min=1,max=50"`
 		Email   string `json:"email" validate:"required,email,min=1,max=50"`
 		Phone   string `json:"phone" validate:"required,min=1,max=13"`
@@ -29,8 +29,8 @@ type (
 	SaveClientRequest struct {
 		Name      string                 `json:"name" validate:"required,min=1,max=50"`
 		Address   string                 `json:"address" validate:"required,min=1,max=100"`
-		Phone     string                 `json:"phone" validate:"required,min=1,max=13"`
-		ClientPic []saveClientPicRequest `json:"client_pic" validate:"required,dive"`
+		Phone     string                 `json:"phone" validate:"required,min=11,max=13"`
+		ClientPic []SaveClientPicRequest `json:"client_pic" validate:"required,minclientpic,dive"`
 	}
 
 	ClientResponse struct {
