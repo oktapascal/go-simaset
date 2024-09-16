@@ -7,11 +7,13 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/oktapascal/go-simpro/web"
 	"net/http"
+	"strings"
 )
 
 type FormatError struct {
-	Param   string `json:"param"`
-	Message string `json:"message"`
+	Param     string `json:"param"`
+	Namespace string `json:"namespace"`
+	Message   string `json:"message"`
 }
 
 func convertTagToMessage(ex validator.FieldError) string {
@@ -41,10 +43,17 @@ func FormatErrors(error error) []FormatError {
 	if errors.As(error, &exception) {
 		fieldErrors := make([]FormatError, len(exception))
 
+		var namespace string
 		for index, ex := range exception {
+			parts := strings.SplitN(ex.Namespace(), ".", 2)
+			if len(parts) > 1 {
+				namespace = parts[1]
+			}
+
 			fieldErrors[index] = FormatError{
-				Param:   ex.Field(),
-				Message: convertTagToMessage(ex),
+				Param:     ex.Field(),
+				Namespace: namespace,
+				Message:   convertTagToMessage(ex),
 			}
 		}
 
