@@ -2,7 +2,6 @@ package client
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/oktapascal/go-simpro/helper"
 	"github.com/oktapascal/go-simpro/model"
@@ -25,7 +24,6 @@ func (hdl *Handler) SaveClient() http.HandlerFunc {
 		}
 
 		err = hdl.validate.RegisterValidation("minclientpic", func(fl validator.FieldLevel) bool {
-			fmt.Println(fl.Field().String())
 			return len(fl.Field().Interface().([]model.SaveClientPicRequest)) >= 1
 		})
 		if err != nil {
@@ -37,12 +35,13 @@ func (hdl *Handler) SaveClient() http.HandlerFunc {
 			panic(err)
 		}
 
-		fmt.Println(req)
+		ctx := request.Context()
+		result := hdl.svc.StoreClient(ctx, req)
 
 		svcResponse := web.DefaultResponse{
 			Code:   http.StatusOK,
 			Status: http.StatusText(http.StatusOK),
-			Data:   nil,
+			Data:   result,
 		}
 
 		writer.Header().Set("Content-Type", "application/json")
