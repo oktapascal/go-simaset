@@ -216,18 +216,15 @@ func (rpo *Repository) DeleteClientPic(ctx context.Context, tx *sql.Tx, id strin
 		placeholders[i] = "?"
 	}
 
-	query := fmt.Sprintf("delete from clients_pic where id = ? and client_id not in (%s)", strings.Join(placeholders, ","))
+	query := fmt.Sprintf("delete from clients_pic where client_id = ? and id not in (%s)", strings.Join(placeholders, ","))
 
-	args := make([]any, len(clientId))
+	args := make([]any, len(clientId)+1)
+	args[0] = id
 	for i, value := range clientId {
-		if i == 0 {
-			args[i] = id
-			continue
-		}
-
-		args[i] = value
+		args[i+1] = value
 	}
 
+	fmt.Println(args)
 	_, err := tx.ExecContext(ctx, query, args...)
 	if err != nil {
 		panic(err)

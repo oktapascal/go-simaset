@@ -112,7 +112,7 @@ func (hdl *Handler) UpdateClient() http.HandlerFunc {
 		}
 
 		err = hdl.validate.RegisterValidation("minclientpic", func(fl validator.FieldLevel) bool {
-			return len(fl.Field().Interface().([]model.SaveClientPicRequest)) >= 1
+			return len(fl.Field().Interface().([]model.UpdateClientPicRequest)) >= 1
 		})
 		if err != nil {
 			panic(err)

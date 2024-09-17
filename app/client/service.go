@@ -143,7 +143,7 @@ func (svc *Service) UpdateClient(ctx context.Context, request *model.UpdateClien
 
 	for _, value := range request.ClientPic {
 		clientPic := model.ClientPic{
-			Id:       request.Id,
+			Id:       value.Id,
 			ClientId: client.Id,
 			Name:     value.Name,
 			Phone:    value.Phone,
