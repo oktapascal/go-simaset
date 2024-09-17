@@ -12,7 +12,7 @@ type Repository struct{}
 func (rpo *Repository) CreateClient(ctx context.Context, tx *sql.Tx, data *model.Client) *model.Client {
 	query := "insert into clients (id, name, address, phone) values (UUID(), ?, ?, ?)"
 
-	_, err := tx.Exec(query, data.Id, data.Name, data.Address, data.Phone)
+	_, err := tx.Exec(query, data.Name, data.Address, data.Phone)
 	if err != nil {
 		panic(err)
 	}
