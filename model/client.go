@@ -30,11 +30,27 @@ type (
 		Address string `json:"address" validate:"required,min=1,max=100"`
 	}
 
+	UpdateClientPicRequest struct {
+		Id      string `json:"id" validate:"required"`
+		Name    string `json:"name" validate:"required,min=1,max=50"`
+		Email   string `json:"email" validate:"required,email,min=1,max=50"`
+		Phone   string `json:"phone" validate:"required,min=1,max=13"`
+		Address string `json:"address" validate:"required,min=1,max=100"`
+	}
+
 	SaveClientRequest struct {
 		Name      string                 `json:"name" validate:"required,min=1,max=50"`
 		Address   string                 `json:"address" validate:"required,min=1,max=100"`
 		Phone     string                 `json:"phone" validate:"required,min=11,max=13"`
 		ClientPic []SaveClientPicRequest `json:"client_pic" validate:"required,minclientpic,dive"`
+	}
+
+	UpdateClientRequest struct {
+		Id        string                   `json:"id" validate:"required"`
+		Name      string                   `json:"name" validate:"required,min=1,max=50"`
+		Address   string                   `json:"address" validate:"required,min=1,max=100"`
+		Phone     string                   `json:"phone" validate:"required,min=11,max=13"`
+		ClientPic []UpdateClientPicRequest `json:"client_pic" validate:"required,minclientpic,dive"`
 	}
 
 	ClientResponse struct {
@@ -63,19 +79,24 @@ type (
 	ClientRepository interface {
 		CreateClient(ctx context.Context, tx *sql.Tx, data *Client) *Client
 		CreateClientPic(ctx context.Context, tx *sql.Tx, data *[]ClientPic) *[]ClientPic
+		UpdateClient(ctx context.Context, tx *sql.Tx, data *Client) *Client
+		UpdateClientPic(ctx context.Context, tx *sql.Tx, data *[]ClientPic) *[]ClientPic
 		GetAllClients(ctx context.Context, tx *sql.Tx) *[]Client
 		GetClient(ctx context.Context, tx *sql.Tx, id string) (*Client, error)
 		GetClientPic(ctx context.Context, tx *sql.Tx, id string) *[]ClientPic
+		DeleteClientPic(ctx context.Context, tx *sql.Tx, id string, clientId []string)
 	}
 
 	ClientService interface {
 		StoreClient(ctx context.Context, request *SaveClientRequest) ClientResponse
+		UpdateClient(ctx context.Context, request *UpdateClientRequest) ClientResponse
 		GetAllClients(ctx context.Context) []ClientResponse
 		GetOneClient(ctx context.Context, id string) ClientDetailResponse
 	}
 
 	ClientHandler interface {
 		SaveClient() http.HandlerFunc
+		UpdateClient() http.HandlerFunc
 		GetAllClients() http.HandlerFunc
 		GetOneClient() http.HandlerFunc
 	}

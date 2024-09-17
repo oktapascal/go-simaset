@@ -121,3 +121,54 @@ func (svc *Service) GetOneClient(ctx context.Context, id string) model.ClientDet
 
 	return result
 }
+
+func (svc *Service) UpdateClient(ctx context.Context, request *model.UpdateClientRequest) model.ClientResponse {
+	tx, err := svc.db.Begin()
+	if err != nil {
+		panic(err)
+	}
+
+	defer helper.CommitRollback(tx)
+
+	client, errClient := svc.rpo.GetClient(ctx, tx, request.Id)
+	if errClient != nil {
+		panic(exception.NewNotFoundError(errClient.Error()))
+	}
+
+	client.Name = request.Name
+	client.Phone = request.Phone
+	client.Address = request.Address
+
+	var clientsPic []model.ClientPic
+
+	for _, value := range request.ClientPic {
+		clientPic := model.ClientPic{
+			Id:       request.Id,
+			ClientId: client.Id,
+			Name:     value.Name,
+			Phone:    value.Phone,
+			Email:    value.Email,
+			Address:  value.Address,
+		}
+
+		clientsPic = append(clientsPic, clientPic)
+	}
+
+	client = svc.rpo.UpdateClient(ctx, tx, client)
+	svc.rpo.UpdateClientPic(ctx, tx, &clientsPic)
+
+	var clientPicCollections []string
+
+	for _, value := range clientsPic {
+		clientPicCollections = append(clientPicCollections, value.Id)
+	}
+
+	svc.rpo.DeleteClientPic(ctx, tx, request.Id, clientPicCollections)
+
+	return model.ClientResponse{
+		Id:      client.Id,
+		Name:    client.Name,
+		Address: client.Address,
+		Phone:   client.Phone,
+	}
+}

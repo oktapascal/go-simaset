@@ -101,3 +101,44 @@ func (hdl *Handler) GetOneClient() http.HandlerFunc {
 		}
 	}
 }
+
+func (hdl *Handler) UpdateClient() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		req := new(model.UpdateClientRequest)
+
+		err := helper.DecodeRequest(request, req)
+		if err != nil {
+			panic(err)
+		}
+
+		err = hdl.validate.RegisterValidation("minclientpic", func(fl validator.FieldLevel) bool {
+			return len(fl.Field().Interface().([]model.SaveClientPicRequest)) >= 1
+		})
+		if err != nil {
+			panic(err)
+		}
+
+		err = hdl.validate.Struct(req)
+		if err != nil {
+			panic(err)
+		}
+
+		ctx := request.Context()
+		result := hdl.svc.UpdateClient(ctx, req)
+
+		svcResponse := web.DefaultResponse{
+			Code:   http.StatusOK,
+			Status: http.StatusText(http.StatusOK),
+			Data:   result,
+		}
+
+		writer.Header().Set("Content-Type", "application/json")
+
+		encoder := json.NewEncoder(writer)
+
+		err = encoder.Encode(svcResponse)
+		if err != nil {
+			panic(err)
+		}
+	}
+}

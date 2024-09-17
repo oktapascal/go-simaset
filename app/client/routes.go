@@ -17,5 +17,6 @@ func (router *Router) InitializeRoute(mux *chi.Mux) {
 		route.Get("/all", router.hdl.GetAllClients())
 		route.Get("/{id}", router.hdl.GetOneClient())
 		route.Post("/", router.hdl.SaveClient())
+		route.Put("/{id}", router.hdl.UpdateClient())
 	})
 }

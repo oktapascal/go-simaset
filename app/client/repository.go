@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/oktapascal/go-simpro/model"
+	"strings"
 )
 
 type Repository struct{}
@@ -13,7 +14,7 @@ type Repository struct{}
 func (rpo *Repository) CreateClient(ctx context.Context, tx *sql.Tx, data *model.Client) *model.Client {
 	query := "insert into clients (id, name, address, phone) values (UUID(), ?, ?, ?)"
 
-	_, err := tx.Exec(query, data.Name, data.Address, data.Phone)
+	_, err := tx.ExecContext(ctx, query, data.Name, data.Address, data.Phone)
 	if err != nil {
 		panic(err)
 	}
@@ -151,4 +152,84 @@ func (rpo *Repository) GetClientPic(ctx context.Context, tx *sql.Tx, id string) 
 	}
 
 	return &clientsPic
+}
+
+func (rpo *Repository) UpdateClient(ctx context.Context, tx *sql.Tx, data *model.Client) *model.Client {
+	query := "update clients set name = ?, address = ?, phone = ? where id = ?"
+
+	_, err := tx.ExecContext(ctx, query, data.Name, data.Address, data.Phone, data.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	return data
+}
+
+func (rpo *Repository) UpdateClientPic(ctx context.Context, tx *sql.Tx, data *[]model.ClientPic) *[]model.ClientPic {
+	query := "update clients_pic set name = ?, phone = ?, email = ?, address = ? where id = ? and client_id = ?"
+
+	stmt, err := tx.Prepare(query)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(stmt)
+
+	var updates []struct {
+		Name     string
+		Phone    string
+		Email    string
+		Address  string
+		Id       string
+		ClientId string
+	}
+
+	for _, value := range *data {
+		updates = append(updates, struct {
+			Name     string
+			Phone    string
+			Email    string
+			Address  string
+			Id       string
+			ClientId string
+		}{Name: value.Name, Phone: value.Phone, Email: value.Email, Address: value.Address, Id: value.Id, ClientId: value.ClientId})
+	}
+
+	for _, update := range updates {
+		_, err := stmt.ExecContext(ctx, update.Name, update.Phone, update.Email, update.Address, update.Id, update.ClientId)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return data
+}
+
+func (rpo *Repository) DeleteClientPic(ctx context.Context, tx *sql.Tx, id string, clientId []string) {
+	placeholders := make([]string, len(clientId))
+	for i := range clientId {
+		placeholders[i] = "?"
+	}
+
+	query := fmt.Sprintf("delete from clients_pic where id = ? and client_id not in (%s)", strings.Join(placeholders, ","))
+
+	args := make([]any, len(clientId))
+	for i, value := range clientId {
+		if i == 0 {
+			args[i] = id
+			continue
+		}
+
+		args[i] = value
+	}
+
+	_, err := tx.ExecContext(ctx, query, args...)
+	if err != nil {
+		panic(err)
+	}
 }
