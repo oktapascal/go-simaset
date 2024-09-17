@@ -79,7 +79,7 @@ func (rpo *Repository) CreateUser(ctx context.Context, tx *sql.Tx, data *model.U
 		panic(err)
 	}
 
-	query = "select id from users order by created_at desc;"
+	query = "select id from users order by created_at desc"
 
 	rows, errRows := tx.QueryContext(ctx, query)
 	if errRows != nil {

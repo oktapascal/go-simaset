@@ -1,6 +1,10 @@
 package model
 
-import "net/http"
+import (
+	"context"
+	"database/sql"
+	"net/http"
+)
 
 type (
 	Client struct {
@@ -40,7 +44,10 @@ type (
 		Phone   string `json:"phone"`
 	}
 
-	ClientRepository interface{}
+	ClientRepository interface {
+		CreateClient(ctx context.Context, tx *sql.Tx, data *Client) *Client
+		CreateClientPic(ctx context.Context, tx *sql.Tx, data *[]ClientPic) *[]ClientPic
+	}
 
 	ClientService interface{}
 
