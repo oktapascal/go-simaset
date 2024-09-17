@@ -44,19 +44,39 @@ type (
 		Phone   string `json:"phone"`
 	}
 
+	ClientPicResponse struct {
+		Id      string `json:"id"`
+		Name    string `json:"name"`
+		Phone   string `json:"phone"`
+		Email   string `json:"email"`
+		Address string `json:"address"`
+	}
+
+	ClientDetailResponse struct {
+		Id        string              `json:"id"`
+		Name      string              `json:"name"`
+		Address   string              `json:"address"`
+		Phone     string              `json:"phone"`
+		ClientPic []ClientPicResponse `json:"client_pic"`
+	}
+
 	ClientRepository interface {
 		CreateClient(ctx context.Context, tx *sql.Tx, data *Client) *Client
 		CreateClientPic(ctx context.Context, tx *sql.Tx, data *[]ClientPic) *[]ClientPic
 		GetAllClients(ctx context.Context, tx *sql.Tx) *[]Client
+		GetClient(ctx context.Context, tx *sql.Tx, id string) (*Client, error)
+		GetClientPic(ctx context.Context, tx *sql.Tx, id string) *[]ClientPic
 	}
 
 	ClientService interface {
 		StoreClient(ctx context.Context, request *SaveClientRequest) ClientResponse
 		GetAllClients(ctx context.Context) []ClientResponse
+		GetOneClient(ctx context.Context, id string) ClientDetailResponse
 	}
 
 	ClientHandler interface {
 		SaveClient() http.HandlerFunc
 		GetAllClients() http.HandlerFunc
+		GetOneClient() http.HandlerFunc
 	}
 )

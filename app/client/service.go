@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"database/sql"
+	"github.com/oktapascal/go-simpro/exception"
 	"github.com/oktapascal/go-simpro/helper"
 	"github.com/oktapascal/go-simpro/model"
 )
@@ -74,6 +75,49 @@ func (svc *Service) GetAllClients(ctx context.Context) []model.ClientResponse {
 			result = append(result, client)
 		}
 	}
+
+	return result
+}
+
+func (svc *Service) GetOneClient(ctx context.Context, id string) model.ClientDetailResponse {
+	tx, err := svc.db.Begin()
+	if err != nil {
+		panic(err)
+	}
+
+	defer helper.CommitRollback(tx)
+
+	client, errClient := svc.rpo.GetClient(ctx, tx, id)
+	if errClient != nil {
+		panic(exception.NewNotFoundError(errClient.Error()))
+	}
+
+	result := model.ClientDetailResponse{
+		Id:        client.Id,
+		Name:      client.Name,
+		Address:   client.Address,
+		Phone:     client.Phone,
+		ClientPic: nil,
+	}
+
+	clientPic := svc.rpo.GetClientPic(ctx, tx, id)
+
+	var clientsPic []model.ClientPicResponse
+	if len(*clientPic) > 0 {
+		for _, value := range *clientPic {
+			cp := model.ClientPicResponse{
+				Id:      value.Id,
+				Name:    value.Name,
+				Phone:   value.Phone,
+				Email:   value.Email,
+				Address: value.Address,
+			}
+
+			clientsPic = append(clientsPic, cp)
+		}
+	}
+
+	result.ClientPic = clientsPic
 
 	return result
 }

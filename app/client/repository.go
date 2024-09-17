@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/oktapascal/go-simpro/model"
 )
@@ -93,4 +94,61 @@ func (rpo *Repository) GetAllClients(ctx context.Context, tx *sql.Tx) *[]model.C
 	}
 
 	return &clients
+}
+
+func (rpo *Repository) GetClient(ctx context.Context, tx *sql.Tx, id string) (*model.Client, error) {
+	query := "select id, name, phone, address from clients where id = ?"
+
+	rows, err := tx.QueryContext(ctx, query, id)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	client := new(model.Client)
+	if rows.Next() {
+		err = rows.Scan(&client.Id, &client.Name, &client.Phone, &client.Address)
+		if err != nil {
+			panic(err)
+		}
+
+		return client, nil
+	} else {
+		return nil, errors.New("client not found")
+	}
+}
+
+func (rpo *Repository) GetClientPic(ctx context.Context, tx *sql.Tx, id string) *[]model.ClientPic {
+	query := "select id, name, phone, email, address from clients_pic where client_id = ?"
+
+	rows, err := tx.QueryContext(ctx, query, id)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	var clientsPic []model.ClientPic
+	for rows.Next() {
+		var clientPic model.ClientPic
+		err = rows.Scan(&clientPic.Id, &clientPic.Name, &clientPic.Phone, &clientPic.Email, &clientPic.Address)
+		if err != nil {
+			panic(err)
+		}
+
+		clientsPic = append(clientsPic, clientPic)
+	}
+
+	return &clientsPic
 }
