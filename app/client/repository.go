@@ -224,7 +224,6 @@ func (rpo *Repository) DeleteClientPic(ctx context.Context, tx *sql.Tx, id strin
 		args[i+1] = value
 	}
 
-	fmt.Println(args)
 	_, err := tx.ExecContext(ctx, query, args...)
 	if err != nil {
 		panic(err)
