@@ -65,3 +65,32 @@ func (rpo *Repository) CreateClientPic(ctx context.Context, tx *sql.Tx, data *[]
 
 	return data
 }
+
+func (rpo *Repository) GetAllClients(ctx context.Context, tx *sql.Tx) *[]model.Client {
+	query := "select id, name, address, phone from clients where deleted_at is null"
+
+	rows, err := tx.QueryContext(ctx, query)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	var clients []model.Client
+	for rows.Next() {
+		var client model.Client
+		err = rows.Scan(&client.Id, &client.Name, &client.Address, &client.Phone)
+		if err != nil {
+			panic(err)
+		}
+
+		clients = append(clients, client)
+	}
+
+	return &clients
+}

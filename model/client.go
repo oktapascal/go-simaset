@@ -47,6 +47,7 @@ type (
 	ClientRepository interface {
 		CreateClient(ctx context.Context, tx *sql.Tx, data *Client) *Client
 		CreateClientPic(ctx context.Context, tx *sql.Tx, data *[]ClientPic) *[]ClientPic
+		GetAllClients(ctx context.Context, tx *sql.Tx) *[]Client
 	}
 
 	ClientService interface {
