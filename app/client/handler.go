@@ -54,3 +54,25 @@ func (hdl *Handler) SaveClient() http.HandlerFunc {
 		}
 	}
 }
+
+func (hdl *Handler) GetAllClients() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		ctx := request.Context()
+		result := hdl.svc.GetAllClients(ctx)
+
+		svcResponse := web.DefaultResponse{
+			Code:   http.StatusOK,
+			Status: http.StatusText(http.StatusOK),
+			Data:   result,
+		}
+
+		writer.Header().Set("Content-Type", "application/json")
+
+		encoder := json.NewEncoder(writer)
+
+		err := encoder.Encode(svcResponse)
+		if err != nil {
+			panic(err)
+		}
+	}
+}

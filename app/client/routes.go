@@ -14,6 +14,7 @@ func (router *Router) InitializeRoute(mux *chi.Mux) {
 	mux.Route("/api/client", func(route chi.Router) {
 		route.Use(middleware.AuthorizationCheckMiddleware)
 		route.Use(middleware.VerifyAccessTokenMiddleware)
+		route.Get("/all", router.hdl.GetAllClients())
 		route.Post("/", router.hdl.SaveClient())
 	})
 }

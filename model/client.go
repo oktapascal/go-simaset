@@ -52,9 +52,11 @@ type (
 
 	ClientService interface {
 		StoreClient(ctx context.Context, request *SaveClientRequest) ClientResponse
+		GetAllClients(ctx context.Context) []ClientResponse
 	}
 
 	ClientHandler interface {
 		SaveClient() http.HandlerFunc
+		GetAllClients() http.HandlerFunc
 	}
 )

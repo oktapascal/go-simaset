@@ -50,3 +50,30 @@ func (svc *Service) StoreClient(ctx context.Context, request *model.SaveClientRe
 		Phone:   client.Phone,
 	}
 }
+
+func (svc *Service) GetAllClients(ctx context.Context) []model.ClientResponse {
+	tx, err := svc.db.Begin()
+	if err != nil {
+		panic(err)
+	}
+
+	defer helper.CommitRollback(tx)
+
+	clients := svc.rpo.GetAllClients(ctx, tx)
+
+	var result []model.ClientResponse
+	if len(*clients) > 0 {
+		for _, value := range *clients {
+			client := model.ClientResponse{
+				Id:      value.Id,
+				Name:    value.Name,
+				Address: value.Address,
+				Phone:   value.Phone,
+			}
+
+			result = append(result, client)
+		}
+	}
+
+	return result
+}
