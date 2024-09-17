@@ -49,7 +49,9 @@ type (
 		CreateClientPic(ctx context.Context, tx *sql.Tx, data *[]ClientPic) *[]ClientPic
 	}
 
-	ClientService interface{}
+	ClientService interface {
+		StoreClient(ctx context.Context, request *SaveClientRequest) ClientResponse
+	}
 
 	ClientHandler interface {
 		SaveClient() http.HandlerFunc
