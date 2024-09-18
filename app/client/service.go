@@ -139,6 +139,16 @@ func (svc *Service) UpdateClient(ctx context.Context, request *model.UpdateClien
 	client.Phone = request.Phone
 	client.Address = request.Address
 
+	var clientPicCollections []string
+
+	for _, value := range request.ClientPic {
+		if value.Id != "" {
+			clientPicCollections = append(clientPicCollections, value.Id)
+		}
+	}
+
+	svc.rpo.DeleteClientPic(ctx, tx, request.Id, clientPicCollections)
+
 	var clientsPicUpdate []model.ClientPic
 	var clientsPicInsert []model.ClientPic
 
@@ -173,14 +183,6 @@ func (svc *Service) UpdateClient(ctx context.Context, request *model.UpdateClien
 	if len(clientsPicInsert) > 0 {
 		svc.rpo.CreateClientPic(ctx, tx, &clientsPicInsert)
 	}
-
-	var clientPicCollections []string
-
-	for _, value := range clientsPicUpdate {
-		clientPicCollections = append(clientPicCollections, value.Id)
-	}
-
-	svc.rpo.DeleteClientPic(ctx, tx, request.Id, clientPicCollections)
 
 	return model.ClientResponse{
 		Id:      client.Id,
