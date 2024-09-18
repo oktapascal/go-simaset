@@ -139,27 +139,44 @@ func (svc *Service) UpdateClient(ctx context.Context, request *model.UpdateClien
 	client.Phone = request.Phone
 	client.Address = request.Address
 
-	var clientsPic []model.ClientPic
+	var clientsPicUpdate []model.ClientPic
+	var clientsPicInsert []model.ClientPic
 
 	for _, value := range request.ClientPic {
-		clientPic := model.ClientPic{
-			Id:       value.Id,
-			ClientId: client.Id,
-			Name:     value.Name,
-			Phone:    value.Phone,
-			Email:    value.Email,
-			Address:  value.Address,
-		}
+		if value.Id != "" {
+			clientPicUpdate := model.ClientPic{
+				Id:       value.Id,
+				ClientId: client.Id,
+				Name:     value.Name,
+				Phone:    value.Phone,
+				Email:    value.Email,
+				Address:  value.Address,
+			}
 
-		clientsPic = append(clientsPic, clientPic)
+			clientsPicUpdate = append(clientsPicUpdate, clientPicUpdate)
+		} else {
+			clientPicInsert := model.ClientPic{
+				ClientId: client.Id,
+				Name:     value.Name,
+				Phone:    value.Phone,
+				Email:    value.Email,
+				Address:  value.Address,
+			}
+
+			clientsPicInsert = append(clientsPicInsert, clientPicInsert)
+		}
 	}
 
 	client = svc.rpo.UpdateClient(ctx, tx, client)
-	svc.rpo.UpdateClientPic(ctx, tx, &clientsPic)
+	svc.rpo.UpdateClientPic(ctx, tx, &clientsPicUpdate)
+
+	if len(clientsPicInsert) > 0 {
+		svc.rpo.CreateClientPic(ctx, tx, &clientsPicInsert)
+	}
 
 	var clientPicCollections []string
 
-	for _, value := range clientsPic {
+	for _, value := range clientsPicUpdate {
 		clientPicCollections = append(clientPicCollections, value.Id)
 	}
 
