@@ -126,7 +126,7 @@ func (rpo *Repository) GetClient(ctx context.Context, tx *sql.Tx, id string) (*m
 }
 
 func (rpo *Repository) GetClientPic(ctx context.Context, tx *sql.Tx, id string) *[]model.ClientPic {
-	query := "select id, name, phone, email, address from clients_pic where client_id = ?"
+	query := "select id, name, phone, email, address from clients_pic where client_id = ? and deleted_at is null"
 
 	rows, err := tx.QueryContext(ctx, query, id)
 	if err != nil {
