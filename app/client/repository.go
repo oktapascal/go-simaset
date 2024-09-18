@@ -216,7 +216,7 @@ func (rpo *Repository) DeleteClientPic(ctx context.Context, tx *sql.Tx, id strin
 		placeholders[i] = "?"
 	}
 
-	query := fmt.Sprintf("delete from clients_pic where client_id = ? and id not in (%s)", strings.Join(placeholders, ","))
+	query := fmt.Sprintf("update clients_pic set deleted_at = current_timestamp where client_id = ? and id not in (%s)", strings.Join(placeholders, ","))
 
 	args := make([]any, len(clientId)+1)
 	args[0] = id
