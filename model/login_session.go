@@ -14,6 +14,7 @@ type (
 		UserId       string
 		RefreshToken string
 		Revoked      bool
+		UserAgent    string
 		ExpiresAt    time.Time
 	}
 
@@ -45,14 +46,14 @@ type (
 
 	LoginSessionRepository interface {
 		CreateLoginSession(ctx context.Context, tx *sql.Tx, data *LoginSession)
-		RevokeLoginSession(ctx context.Context, tx *sql.Tx, userId string)
-		CheckRefreshToken(ctx context.Context, tx *sql.Tx, userId string) (*LoginSession, error)
+		RevokeLoginSession(ctx context.Context, tx *sql.Tx, userId string, userAgent string)
+		CheckRefreshToken(ctx context.Context, tx *sql.Tx, userId string, userAgent string) (*LoginSession, error)
 	}
 
 	LoginSessionService interface {
-		Login(ctx context.Context, request *LoginRequest) LoginResponse
-		Logout(ctx context.Context, claims jwt.MapClaims)
-		GenerateAccessToken(ctx context.Context, claims jwt.MapClaims) TokenResponse
+		Login(ctx context.Context, request *LoginRequest, userAgent string) LoginResponse
+		Logout(ctx context.Context, claims jwt.MapClaims, userAgen string)
+		GenerateAccessToken(ctx context.Context, claims jwt.MapClaims, userAgent string) TokenResponse
 	}
 
 	LoginSessionHandler interface {

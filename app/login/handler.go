@@ -30,7 +30,7 @@ func (hdl *Handler) Login() http.HandlerFunc {
 		}
 
 		ctx := request.Context()
-		result := hdl.svc.Login(ctx, req)
+		result := hdl.svc.Login(ctx, req, request.UserAgent())
 
 		svcResponse := web.DefaultResponse{
 			Code:   http.StatusOK,
@@ -54,7 +54,7 @@ func (hdl *Handler) Logout() http.HandlerFunc {
 		userInfo := request.Context().Value("claims").(jwt.MapClaims)
 
 		ctx := request.Context()
-		hdl.svc.Logout(ctx, userInfo)
+		hdl.svc.Logout(ctx, userInfo, request.UserAgent())
 
 		svcResponse := web.DefaultResponse{
 			Code:   http.StatusOK,
@@ -78,7 +78,7 @@ func (hdl *Handler) GetAccessToken() http.HandlerFunc {
 		userInfo := request.Context().Value("claims").(jwt.MapClaims)
 
 		ctx := request.Context()
-		result := hdl.svc.GenerateAccessToken(ctx, userInfo)
+		result := hdl.svc.GenerateAccessToken(ctx, userInfo, request.UserAgent())
 
 		svcResponse := web.DefaultResponse{
 			Code:   http.StatusOK,

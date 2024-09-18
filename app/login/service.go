@@ -18,7 +18,7 @@ type Service struct {
 	db   *sql.DB
 }
 
-func (svc *Service) Login(ctx context.Context, request *model.LoginRequest) model.LoginResponse {
+func (svc *Service) Login(ctx context.Context, request *model.LoginRequest, userAgent string) model.LoginResponse {
 	tx, err := svc.db.Begin()
 	if err != nil {
 		panic(err)
@@ -90,6 +90,7 @@ func (svc *Service) Login(ctx context.Context, request *model.LoginRequest) mode
 	session := new(model.LoginSession)
 	session.UserId = user.Id
 	session.RefreshToken = refreshToken
+	session.UserAgent = userAgent
 
 	unixFormat := expiresRefreshToken
 	t := time.Unix(unixFormat, 0)
@@ -125,7 +126,7 @@ func (svc *Service) Login(ctx context.Context, request *model.LoginRequest) mode
 	}
 }
 
-func (svc *Service) Logout(ctx context.Context, claims jwt.MapClaims) {
+func (svc *Service) Logout(ctx context.Context, claims jwt.MapClaims, userAgent string) {
 	tx, err := svc.db.Begin()
 	if err != nil {
 		panic(err)
@@ -143,10 +144,10 @@ func (svc *Service) Logout(ctx context.Context, claims jwt.MapClaims) {
 		panic(exception.NewNotFoundError(errUser.Error()))
 	}
 
-	svc.rpo.RevokeLoginSession(ctx, tx, user.Id)
+	svc.rpo.RevokeLoginSession(ctx, tx, user.Id, userAgent)
 }
 
-func (svc *Service) GenerateAccessToken(ctx context.Context, claims jwt.MapClaims) model.TokenResponse {
+func (svc *Service) GenerateAccessToken(ctx context.Context, claims jwt.MapClaims, userAgent string) model.TokenResponse {
 	tx, err := svc.db.Begin()
 	if err != nil {
 		panic(err)
@@ -164,7 +165,7 @@ func (svc *Service) GenerateAccessToken(ctx context.Context, claims jwt.MapClaim
 		panic(exception.NewNotFoundError(errUser.Error()))
 	}
 
-	session, errSession := svc.rpo.CheckRefreshToken(ctx, tx, user.Id)
+	session, errSession := svc.rpo.CheckRefreshToken(ctx, tx, user.Id, userAgent)
 	if errSession != nil {
 		panic(exception.NewNotFoundError(errSession.Error()))
 	}
