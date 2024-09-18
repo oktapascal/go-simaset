@@ -31,7 +31,7 @@ type (
 	}
 
 	UpdateClientPicRequest struct {
-		Id      string `json:"id" validate:"required"`
+		Id      string `json:"id"`
 		Name    string `json:"name" validate:"required,min=1,max=50"`
 		Email   string `json:"email" validate:"required,email,min=1,max=50"`
 		Phone   string `json:"phone" validate:"required,min=1,max=13"`
