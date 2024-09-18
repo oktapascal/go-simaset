@@ -191,3 +191,14 @@ func (svc *Service) UpdateClient(ctx context.Context, request *model.UpdateClien
 		Phone:   client.Phone,
 	}
 }
+
+func (svc *Service) DeleteClient(ctx context.Context, id string) {
+	tx, err := svc.db.Begin()
+	if err != nil {
+		panic(err)
+	}
+
+	defer helper.CommitRollback(tx)
+
+	svc.rpo.DeleteClient(ctx, tx, id)
+}

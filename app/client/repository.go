@@ -229,3 +229,18 @@ func (rpo *Repository) DeleteClientPic(ctx context.Context, tx *sql.Tx, id strin
 		panic(err)
 	}
 }
+
+func (rpo *Repository) DeleteClient(ctx context.Context, tx *sql.Tx, id string) {
+	query := "update clients set deleted_at = current_timestamp where id = ?"
+
+	_, err := tx.ExecContext(ctx, query, id)
+	if err != nil {
+		panic(err)
+	}
+
+	query = "update clients_pic set deleted_at = current_timestamp where client_id = ? and deleted_at is null"
+	_, err = tx.ExecContext(ctx, query, id)
+	if err != nil {
+		panic(err)
+	}
+}

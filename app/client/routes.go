@@ -18,5 +18,6 @@ func (router *Router) InitializeRoute(mux *chi.Mux) {
 		route.Get("/{id}", router.hdl.GetOneClient())
 		route.Post("/", router.hdl.SaveClient())
 		route.Put("/{id}", router.hdl.UpdateClient())
+		route.Delete("/{id}", router.hdl.DeleteClient())
 	})
 }

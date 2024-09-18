@@ -85,6 +85,7 @@ type (
 		GetClient(ctx context.Context, tx *sql.Tx, id string) (*Client, error)
 		GetClientPic(ctx context.Context, tx *sql.Tx, id string) *[]ClientPic
 		DeleteClientPic(ctx context.Context, tx *sql.Tx, id string, clientId []string)
+		DeleteClient(ctx context.Context, tx *sql.Tx, id string)
 	}
 
 	ClientService interface {
@@ -92,6 +93,7 @@ type (
 		UpdateClient(ctx context.Context, request *UpdateClientRequest) ClientResponse
 		GetAllClients(ctx context.Context) []ClientResponse
 		GetOneClient(ctx context.Context, id string) ClientDetailResponse
+		DeleteClient(ctx context.Context, id string)
 	}
 
 	ClientHandler interface {
@@ -99,5 +101,6 @@ type (
 		UpdateClient() http.HandlerFunc
 		GetAllClients() http.HandlerFunc
 		GetOneClient() http.HandlerFunc
+		DeleteClient() http.HandlerFunc
 	}
 )

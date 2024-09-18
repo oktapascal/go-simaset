@@ -142,3 +142,27 @@ func (hdl *Handler) UpdateClient() http.HandlerFunc {
 		}
 	}
 }
+
+func (hdl *Handler) DeleteClient() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		id := chi.URLParam(request, "id")
+
+		ctx := request.Context()
+		hdl.svc.DeleteClient(ctx, id)
+
+		svcResponse := web.DefaultResponse{
+			Code:   http.StatusOK,
+			Status: http.StatusText(http.StatusOK),
+			Data:   nil,
+		}
+
+		writer.Header().Set("Content-Type", "application/json")
+
+		encoder := json.NewEncoder(writer)
+
+		err := encoder.Encode(svcResponse)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
