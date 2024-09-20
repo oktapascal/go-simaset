@@ -66,10 +66,11 @@ func (svc *Service) GetAllClients(ctx context.Context) []model.ClientResponse {
 	if len(*clients) > 0 {
 		for _, value := range *clients {
 			client := model.ClientResponse{
-				Id:      value.Id,
-				Name:    value.Name,
-				Address: value.Address,
-				Phone:   value.Phone,
+				Id:           value.Id,
+				Name:         value.Name,
+				Address:      value.Address,
+				Phone:        value.Phone,
+				NumberOfPics: value.NumberOfPics,
 			}
 
 			result = append(result, client)

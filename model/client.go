@@ -8,10 +8,11 @@ import (
 
 type (
 	Client struct {
-		Id      string
-		Name    string
-		Address string
-		Phone   string
+		Id           string
+		Name         string
+		Address      string
+		Phone        string
+		NumberOfPics int8
 	}
 
 	ClientPic struct {
@@ -54,10 +55,11 @@ type (
 	}
 
 	ClientResponse struct {
-		Id      string `json:"id"`
-		Name    string `json:"name"`
-		Address string `json:"address"`
-		Phone   string `json:"phone"`
+		Id           string `json:"id"`
+		Name         string `json:"name"`
+		Address      string `json:"address"`
+		Phone        string `json:"phone"`
+		NumberOfPics int8   `json:"number_of_pics"`
 	}
 
 	ClientPicResponse struct {

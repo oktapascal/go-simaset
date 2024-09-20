@@ -69,7 +69,15 @@ func (rpo *Repository) CreateClientPic(ctx context.Context, tx *sql.Tx, data *[]
 }
 
 func (rpo *Repository) GetAllClients(ctx context.Context, tx *sql.Tx) *[]model.Client {
-	query := "select id, name, address, phone from clients where deleted_at is null"
+	query := `select t1.id, t1.name, t1.address, t1.phone, t2.jumlah_pic
+	from clients t1
+	inner join (
+		select client_id, count(id) jumlah_pic
+		from clients_pic
+		where deleted_at is null
+		group by client_id
+	) t2 on t1.id=t2.client_id
+	where t1.deleted_at is null`
 
 	rows, err := tx.QueryContext(ctx, query)
 	if err != nil {
@@ -86,7 +94,7 @@ func (rpo *Repository) GetAllClients(ctx context.Context, tx *sql.Tx) *[]model.C
 	var clients []model.Client
 	for rows.Next() {
 		var client model.Client
-		err = rows.Scan(&client.Id, &client.Name, &client.Address, &client.Phone)
+		err = rows.Scan(&client.Id, &client.Name, &client.Address, &client.Phone, &client.NumberOfPics)
 		if err != nil {
 			panic(err)
 		}
