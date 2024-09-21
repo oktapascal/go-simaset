@@ -143,7 +143,7 @@ func (svc *Service) UpdateClient(ctx context.Context, request *model.UpdateClien
 	var clientPicCollections []string
 
 	for _, value := range request.ClientPic {
-		if value.Id != "" {
+		if value.Id != "" && value.Id != "-" {
 			clientPicCollections = append(clientPicCollections, value.Id)
 		}
 	}
@@ -154,7 +154,7 @@ func (svc *Service) UpdateClient(ctx context.Context, request *model.UpdateClien
 	var clientsPicInsert []model.ClientPic
 
 	for _, value := range request.ClientPic {
-		if value.Id != "" {
+		if value.Id != "" && value.Id != "-" {
 			clientPicUpdate := model.ClientPic{
 				Id:       value.Id,
 				ClientId: client.Id,
