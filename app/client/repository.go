@@ -77,7 +77,8 @@ func (rpo *Repository) GetAllClients(ctx context.Context, tx *sql.Tx) *[]model.C
 		where deleted_at is null
 		group by client_id
 	) t2 on t1.id=t2.client_id
-	where t1.deleted_at is null`
+	where t1.deleted_at is null
+	order by t1.created_at desc, t1.updated_at desc`
 
 	rows, err := tx.QueryContext(ctx, query)
 	if err != nil {
