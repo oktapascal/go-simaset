@@ -217,3 +217,49 @@ func (hdl *Handler) GetPhotoProfile() http.HandlerFunc {
 		http.ServeFile(writer, request, path)
 	}
 }
+
+func (hdl *Handler) GetUserMenu() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		userInfo := request.Context().Value("claims").(jwt.MapClaims)
+
+		username, ok := userInfo["sub"].(string)
+		if !ok {
+			panic("Something wrong when extracting username from jwt token")
+		}
+
+		jsonFile, err := os.Open("storage/json/" + username + "-menu.json")
+		if err != nil {
+			panic(err.Error())
+		}
+
+		defer func(jsonFile *os.File) {
+			err := jsonFile.Close()
+			if err != nil {
+				panic(err.Error())
+			}
+		}(jsonFile)
+
+		bytesValue, errBytes := io.ReadAll(jsonFile)
+		if errBytes != nil {
+			panic(errBytes.Error())
+		}
+
+		var result []model.UserMenu
+		err = json.Unmarshal(bytesValue, &result)
+
+		svcResponse := web.DefaultResponse{
+			Code:   http.StatusOK,
+			Status: http.StatusText(http.StatusOK),
+			Data:   result,
+		}
+
+		writer.Header().Set("Content-Type", "application/json")
+
+		encoder := json.NewEncoder(writer)
+
+		err = encoder.Encode(svcResponse)
+		if err != nil {
+			panic(err)
+		}
+	}
+}

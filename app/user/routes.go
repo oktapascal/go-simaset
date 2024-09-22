@@ -18,6 +18,7 @@ func (router *Router) InitializeRoute(mux *chi.Mux) {
 			route.Use(middleware.AuthorizationCheckMiddleware)
 			route.Use(middleware.VerifyAccessTokenMiddleware)
 			route.Get("/with-token", router.hdl.GetUserByToken())
+			route.Get("/menu", router.hdl.GetUserMenu())
 			route.Post("/", router.hdl.SaveUser())
 			route.Put("/", router.hdl.EditUser())
 			route.Post("/upload-photo", router.hdl.UploadPhotoProfile())

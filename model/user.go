@@ -73,6 +73,21 @@ type (
 		Photo    string `json:"photo"`
 	}
 
+	UserMenuChildren struct {
+		Id       string             `json:"id"`
+		Name     string             `json:"name"`
+		PathUrl  string             `json:"path_url"`
+		Children []UserMenuChildren `json:"children"`
+	}
+
+	UserMenu struct {
+		Id       string             `json:"id"`
+		Name     string             `json:"name"`
+		Icon     string             `json:"icon"`
+		PathUrl  string             `json:"path_url"`
+		Children []UserMenuChildren `json:"children"`
+	}
+
 	UserRepository interface {
 		FindByEmail(ctx context.Context, tx *sql.Tx, email string) (*User, error)
 		FindByUsername(ctx context.Context, tx *sql.Tx, username string) (*User, error)
@@ -98,5 +113,6 @@ type (
 		EditUser() http.HandlerFunc
 		UploadPhotoProfile() http.HandlerFunc
 		GetPhotoProfile() http.HandlerFunc
+		GetUserMenu() http.HandlerFunc
 	}
 )
