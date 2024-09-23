@@ -203,3 +203,9 @@ func (svc *Service) GetUserByUsername(ctx context.Context, username string) mode
 		Photo:    user.Avatar,
 	}
 }
+
+func (svc *Service) GetUserMenu(username string) []model.UserMenu {
+	menus := svc.rpo.FindMenuUser(username)
+
+	return *menus
+}

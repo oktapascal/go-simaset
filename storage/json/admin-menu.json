@@ -1,0 +1,30 @@
+[
+  {
+    "id": "M1",
+    "name": "Home",
+    "icon": "HouseIcon",
+    "path_url": "/",
+    "children": []
+  },
+  {
+    "id": "M2",
+    "name": "Client",
+    "icon": "BuildingIcon",
+    "path_url": "/clients",
+    "children": []
+  },
+  {
+    "id": "M3",
+    "name": "Recycle",
+    "icon": "RecycleIcon",
+    "path_url": "",
+    "children": [
+      {
+        "id": "M3A",
+        "name": "Client",
+        "path_url": "/recycle/client",
+        "children": []
+      }
+    ]
+  }
+]

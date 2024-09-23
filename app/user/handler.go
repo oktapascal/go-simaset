@@ -227,25 +227,7 @@ func (hdl *Handler) GetUserMenu() http.HandlerFunc {
 			panic("Something wrong when extracting username from jwt token")
 		}
 
-		jsonFile, err := os.Open("storage/json/" + username + "-menu.json")
-		if err != nil {
-			panic(err.Error())
-		}
-
-		defer func(jsonFile *os.File) {
-			err := jsonFile.Close()
-			if err != nil {
-				panic(err.Error())
-			}
-		}(jsonFile)
-
-		bytesValue, errBytes := io.ReadAll(jsonFile)
-		if errBytes != nil {
-			panic(errBytes.Error())
-		}
-
-		var result []model.UserMenu
-		err = json.Unmarshal(bytesValue, &result)
+		result := hdl.svc.GetUserMenu(username)
 
 		svcResponse := web.DefaultResponse{
 			Code:   http.StatusOK,
@@ -257,7 +239,7 @@ func (hdl *Handler) GetUserMenu() http.HandlerFunc {
 
 		encoder := json.NewEncoder(writer)
 
-		err = encoder.Encode(svcResponse)
+		err := encoder.Encode(svcResponse)
 		if err != nil {
 			panic(err)
 		}

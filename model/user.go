@@ -96,12 +96,14 @@ type (
 		FindPermissionUser(ctx context.Context, tx *sql.Tx, userId string) *[]UserPermission
 		UpdateUser(ctx context.Context, tx *sql.Tx, data *User) *User
 		UpdatePhotoUser(ctx context.Context, tx *sql.Tx, data *User) *User
+		FindMenuUser(username string) *[]UserMenu
 	}
 
 	UserService interface {
 		SaveUser(ctx context.Context, request *SaveUserRequest) UserResponse
 		GetUserByToken(ctx context.Context, claims jwt.MapClaims) UserProfileResponse
 		GetUserIdByToken(ctx context.Context, claims jwt.MapClaims) string
+		GetUserMenu(username string) []UserMenu
 		GetUserByUsername(ctx context.Context, username string) UserProfileWithIDResponse
 		EditUser(ctx context.Context, request *UpdateUserRequest, claims jwt.MapClaims) UserProfileResponse
 		EditPhotoUser(ctx context.Context, fileName string, claims jwt.MapClaims) UserProfileResponse

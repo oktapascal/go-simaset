@@ -42,6 +42,7 @@ go.sum
 /run/
 /tmp/
 /out/
-/storage/
+/storage/applications
+/storage/logs
 # Project specific
 .DS_Store
