@@ -32,6 +32,7 @@ func (svc *Service) GetMenus(ctx context.Context) []model.MenuResponse {
 				IconComponent: value.IconComponent,
 				PathUrl:       value.PathUrl,
 				Indeks:        value.Indeks,
+				Children:      value.Children,
 			}
 
 			result = append(result, menu)

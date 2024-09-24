@@ -13,6 +13,7 @@ type (
 		IconComponent string
 		PathUrl       string
 		Indeks        int8
+		Children      int8
 	}
 
 	MenuChild struct {
@@ -29,6 +30,7 @@ type (
 		IconComponent string `json:"icon_component"`
 		PathUrl       string `json:"path_url"`
 		Indeks        int8   `json:"indeks"`
+		Children      int8   `json:"children"`
 	}
 
 	MenuChildResponse struct {

@@ -10,7 +10,16 @@ import (
 type Repository struct{}
 
 func (rpo *Repository) GetMenus(ctx context.Context, tx *sql.Tx) *[]model.Menu {
-	query := "select id, name, icon_component, path_url, indeks from menus where deleted_at is null order by indeks"
+	query := `select t1.id, t1.name, t1.icon_component, t1.path_url, t1.indeks, ifnull(t2.menu_count, 0) as menu_count
+	from menus t1
+	left join (
+	    select menu_id, count(id) menu_count
+	    from menu_childs
+	    where deleted_at is null
+	    group by menu_id
+	) t2 on t1.id=t2.menu_id
+	where t1.deleted_at is null 
+	order by t1.indeks`
 
 	rows, err := tx.QueryContext(ctx, query)
 	if err != nil {
@@ -27,7 +36,7 @@ func (rpo *Repository) GetMenus(ctx context.Context, tx *sql.Tx) *[]model.Menu {
 	var menus []model.Menu
 	for rows.Next() {
 		var menu model.Menu
-		err = rows.Scan(&menu.Id, &menu.Name, &menu.IconComponent, &menu.PathUrl, &menu.Indeks)
+		err = rows.Scan(&menu.Id, &menu.Name, &menu.IconComponent, &menu.PathUrl, &menu.Indeks, &menu.Children)
 		if err != nil {
 			panic(err)
 		}
