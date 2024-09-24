@@ -41,6 +41,7 @@ type (
 	MenuRepository interface {
 		GetMenus(ctx context.Context, tx *sql.Tx) *[]Menu
 		GetMenuChildren(ctx context.Context, tx *sql.Tx, menuId string) *[]MenuChild
+		FindMenuById(ctx context.Context, tx *sql.Tx, menuId string) (*Menu, error)
 	}
 
 	MenuService interface {

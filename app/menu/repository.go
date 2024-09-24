@@ -3,6 +3,7 @@ package menu
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"github.com/oktapascal/go-simpro/model"
 )
 
@@ -64,4 +65,32 @@ func (rpo *Repository) GetMenuChildren(ctx context.Context, tx *sql.Tx, menuId s
 	}
 
 	return &menus
+}
+
+func (rpo *Repository) FindMenuById(ctx context.Context, tx *sql.Tx, menuId string) (*model.Menu, error) {
+	query := "select id, name, icon_component, path_url, indeks from menus where id = ? and deleted_at is null"
+
+	rows, err := tx.QueryContext(ctx, query, menuId)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	menu := new(model.Menu)
+	if rows.Next() {
+		err = rows.Scan(&menu.Id, &menu.Name, &menu.IconComponent, &menu.PathUrl, &menu.Indeks)
+		if err != nil {
+			panic(err)
+		}
+
+		return menu, nil
+	} else {
+		return nil, errors.New("menu not found")
+	}
 }

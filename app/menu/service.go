@@ -3,6 +3,7 @@ package menu
 import (
 	"context"
 	"database/sql"
+	"github.com/oktapascal/go-simpro/exception"
 	"github.com/oktapascal/go-simpro/helper"
 	"github.com/oktapascal/go-simpro/model"
 )
@@ -47,6 +48,11 @@ func (svc *Service) GetMenuChildren(ctx context.Context, menuId string) []model.
 	}
 
 	defer helper.CommitRollback(tx)
+
+	_, errMenu := svc.rpo.FindMenuById(ctx, tx, menuId)
+	if errMenu != nil {
+		panic(exception.NewNotFoundError(errMenu.Error()))
+	}
 
 	menus := svc.rpo.GetMenuChildren(ctx, tx, menuId)
 
