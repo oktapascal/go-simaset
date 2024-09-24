@@ -3,12 +3,9 @@ package user
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/oktapascal/go-simpro/model"
-	"io"
-	"os"
 )
 
 type Repository struct {
@@ -179,28 +176,4 @@ func (rpo *Repository) UpdatePhotoUser(ctx context.Context, tx *sql.Tx, data *mo
 	}
 
 	return data
-}
-
-func (rpo *Repository) FindMenuUser(username string) *[]model.UserMenu {
-	jsonFile, err := os.Open("storage/json/" + username + "-menu.json")
-	if err != nil {
-		panic(err.Error())
-	}
-
-	defer func(jsonFile *os.File) {
-		err := jsonFile.Close()
-		if err != nil {
-			panic(err.Error())
-		}
-	}(jsonFile)
-
-	bytesValue, errBytes := io.ReadAll(jsonFile)
-	if errBytes != nil {
-		panic(errBytes.Error())
-	}
-
-	var menus []model.UserMenu
-	err = json.Unmarshal(bytesValue, &menus)
-
-	return &menus
 }

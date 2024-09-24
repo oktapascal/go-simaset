@@ -217,31 +217,3 @@ func (hdl *Handler) GetPhotoProfile() http.HandlerFunc {
 		http.ServeFile(writer, request, path)
 	}
 }
-
-func (hdl *Handler) GetUserMenu() http.HandlerFunc {
-	return func(writer http.ResponseWriter, request *http.Request) {
-		userInfo := request.Context().Value("claims").(jwt.MapClaims)
-
-		username, ok := userInfo["sub"].(string)
-		if !ok {
-			panic("Something wrong when extracting username from jwt token")
-		}
-
-		result := hdl.svc.GetUserMenu(username)
-
-		svcResponse := web.DefaultResponse{
-			Code:   http.StatusOK,
-			Status: http.StatusText(http.StatusOK),
-			Data:   result,
-		}
-
-		writer.Header().Set("Content-Type", "application/json")
-
-		encoder := json.NewEncoder(writer)
-
-		err := encoder.Encode(svcResponse)
-		if err != nil {
-			panic(err)
-		}
-	}
-}
