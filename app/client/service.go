@@ -201,5 +201,10 @@ func (svc *Service) DeleteClient(ctx context.Context, id string) {
 
 	defer helper.CommitRollback(tx)
 
+	_, errClient := svc.rpo.GetClient(ctx, tx, id)
+	if errClient != nil {
+		panic(exception.NewNotFoundError(errClient.Error()))
+	}
+
 	svc.rpo.DeleteClient(ctx, tx, id)
 }

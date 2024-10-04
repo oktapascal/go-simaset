@@ -7,6 +7,7 @@ import (
 	"github.com/oktapascal/go-simpro/app/client"
 	"github.com/oktapascal/go-simpro/app/login"
 	"github.com/oktapascal/go-simpro/app/menu"
+	"github.com/oktapascal/go-simpro/app/menu_group"
 	"github.com/oktapascal/go-simpro/app/user"
 	"github.com/oktapascal/go-simpro/app/welcome"
 	"github.com/oktapascal/go-simpro/config"
@@ -54,6 +55,7 @@ func main() {
 	user.Wire(validate, db).InitializeRoute(router)
 	client.Wire(validate, db).InitializeRoute(router)
 	menu.Wire(validate, db).InitializeRoute(router)
+	menu_group.Wire(validate, db).InitializeRoute(router)
 
 	log.Info(fmt.Sprintf("%s Application Started on http://localhost:%s", viper.GetString("APP_NAME"), viper.GetString("APP_PORT")))
 	err = http.ListenAndServe(":"+viper.GetString("APP_PORT"), router)
