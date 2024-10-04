@@ -11,7 +11,7 @@ import (
 type Repository struct {
 }
 
-func (rpo *Repository) CreateMenuGroup(ctx context.Context, tx *sql.Tx, data *model.MenuGroup) *model.MenuGroup {
+func (rpo *Repository) GenerateMenuGroupKode(ctx context.Context, tx *sql.Tx) *string {
 	query := "select id from menu_groups order by created_at desc limit 1"
 
 	rows, err := tx.QueryContext(ctx, query)
@@ -29,6 +29,9 @@ func (rpo *Repository) CreateMenuGroup(ctx context.Context, tx *sql.Tx, data *mo
 	var id string
 	if rows.Next() {
 		err = rows.Scan(&id)
+		if err != nil {
+			panic(err)
+		}
 
 		strNumber := id[3:]
 		number, errConvert := strconv.Atoi(strNumber)
@@ -36,7 +39,7 @@ func (rpo *Repository) CreateMenuGroup(ctx context.Context, tx *sql.Tx, data *mo
 			panic(errConvert)
 		}
 
-		number = number + 1
+		number++
 		strNumber = strconv.Itoa(number)
 
 		if len(strNumber) == 2 {
@@ -48,10 +51,13 @@ func (rpo *Repository) CreateMenuGroup(ctx context.Context, tx *sql.Tx, data *mo
 		id = "MG-01"
 	}
 
-	data.Id = id
-	query = "insert into menu_groups (id, name) values (?,?)"
+	return &id
+}
 
-	_, err = tx.ExecContext(ctx, query, data.Id, data.Name)
+func (rpo *Repository) CreateMenuGroup(ctx context.Context, tx *sql.Tx, data *model.MenuGroup) *model.MenuGroup {
+	query := "insert into menu_groups (id, name) values (?,?)"
+
+	_, err := tx.ExecContext(ctx, query, data.Id, data.Name)
 	if err != nil {
 		panic(err)
 	}

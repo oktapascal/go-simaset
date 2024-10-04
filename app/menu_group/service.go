@@ -21,7 +21,10 @@ func (svc *Service) StoreMenuGroup(ctx context.Context, request *model.MenuGroup
 
 	defer helper.CommitRollback(tx)
 
+	id := svc.rpo.GenerateMenuGroupKode(ctx, tx)
+
 	menuGroup := new(model.MenuGroup)
+	menuGroup.Id = *id
 	menuGroup.Name = request.Name
 
 	menuGroup = svc.rpo.CreateMenuGroup(ctx, tx, menuGroup)

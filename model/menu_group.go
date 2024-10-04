@@ -23,6 +23,7 @@ type (
 	}
 
 	MenuGroupRepository interface {
+		GenerateMenuGroupKode(ctx context.Context, tx *sql.Tx) *string
 		CreateMenuGroup(ctx context.Context, tx *sql.Tx, data *MenuGroup) *MenuGroup
 		UpdateMenuGroup(ctx context.Context, tx *sql.Tx, data *MenuGroup) *MenuGroup
 		GetMenuGroup(ctx context.Context, tx *sql.Tx, id string) (*MenuGroup, error)
