@@ -17,7 +17,7 @@
     "id": "M3",
     "name": "Recycle",
     "icon": "RecycleIcon",
-    "path_url": "",
+    "path_url": "/recycle",
     "children": [
       {
         "id": "M3A",
@@ -31,7 +31,7 @@
     "id": "M4",
     "name": "Settings",
     "icon": "SettingIcon",
-    "path_url": "",
+    "path_url": "/settings",
     "children": [
       {
         "id": "M4A",

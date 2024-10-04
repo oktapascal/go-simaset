@@ -1,7 +1,6 @@
 package menu
 
 import (
-	"database/sql"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/wire"
 	"github.com/oktapascal/go-simpro/model"
@@ -53,11 +52,10 @@ func ProvideHandler(svc model.MenuService, validate *validator.Validate) *Handle
 	return hdl
 }
 
-func ProvideService(rpo model.MenuRepository, db *sql.DB) *Service {
+func ProvideService(rpo model.MenuRepository) *Service {
 	svcOnce.Do(func() {
 		svc = &Service{
 			rpo: rpo,
-			db:  db,
 		}
 	})
 

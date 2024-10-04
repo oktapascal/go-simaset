@@ -17,6 +17,7 @@ func GenerateAccessToken(parameters *config.JwtParameters) (string, int64, error
 		"exp":          expiresAt,
 		"iat":          time.Now().Unix(),
 		"id":           parameters.Id,
+		"menu_group":   parameters.GroupMenu,
 		"flag_create":  parameters.FlagCreate,
 		"flag_read":    parameters.FlagRead,
 		"flag_update":  parameters.FlagUpdate,
@@ -41,11 +42,12 @@ func GenerateRefreshToken(parameters *config.JwtParameters) (string, int64, erro
 		"aud":         parameters.Email,
 		"exp":         expiresAt,
 		"iat":         time.Now().Unix(),
+		"id":          parameters.Id,
+		"menu_group":  parameters.GroupMenu,
 		"flag_create": parameters.FlagCreate,
 		"flag_read":   parameters.FlagRead,
 		"flag_update": parameters.FlagUpdate,
 		"flag_delete": parameters.FlagDelete,
-		"menu_group":  parameters.GroupMenu,
 	})
 
 	tokenString, err := token.SignedString([]byte(viper.GetString("JWT_REFRESH_SIGNATURE_KEY")))

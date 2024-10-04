@@ -54,7 +54,7 @@ func main() {
 	login.Wire(validate, db).InitializeRoute(router)
 	user.Wire(validate, db).InitializeRoute(router)
 	client.Wire(validate, db).InitializeRoute(router)
-	menu.Wire(validate, db).InitializeRoute(router)
+	menu.Wire(validate).InitializeRoute(router)
 	menu_group.Wire(validate, db).InitializeRoute(router)
 
 	log.Info(fmt.Sprintf("%s Application Started on http://localhost:%s", viper.GetString("APP_NAME"), viper.GetString("APP_PORT")))

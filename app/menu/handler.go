@@ -2,8 +2,8 @@ package menu
 
 import (
 	"encoding/json"
-	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/oktapascal/go-simpro/model"
 	"github.com/oktapascal/go-simpro/web"
 	"net/http"
@@ -14,34 +14,16 @@ type Handler struct {
 	validate *validator.Validate
 }
 
-func (hdl *Handler) GetMenus() http.HandlerFunc {
+func (hdl *Handler) GetMenu() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		ctx := request.Context()
-		result := hdl.svc.GetMenus(ctx)
+		userInfo := request.Context().Value("claims").(jwt.MapClaims)
 
-		svcResponse := web.DefaultResponse{
-			Code:   http.StatusOK,
-			Status: http.StatusText(http.StatusOK),
-			Data:   result,
+		group, ok := userInfo["menu_group"].(string)
+		if !ok {
+			panic("Something wrong when extracting menu group from jwt token")
 		}
 
-		writer.Header().Set("Content-Type", "application/json")
-
-		encoder := json.NewEncoder(writer)
-
-		err := encoder.Encode(svcResponse)
-		if err != nil {
-			panic(err)
-		}
-	}
-}
-
-func (hdl *Handler) GetMenuChildren() http.HandlerFunc {
-	return func(writer http.ResponseWriter, request *http.Request) {
-		menuId := chi.URLParam(request, "menuId")
-
-		ctx := request.Context()
-		result := hdl.svc.GetMenuChildren(ctx, menuId)
+		result := hdl.svc.GetMenu(group)
 
 		svcResponse := web.DefaultResponse{
 			Code:   http.StatusOK,

@@ -7,15 +7,14 @@
 package menu
 
 import (
-	"database/sql"
 	"github.com/go-playground/validator/v10"
 )
 
 // Injectors from wire.go:
 
-func Wire(validate *validator.Validate, db *sql.DB) *Router {
+func Wire(validate *validator.Validate) *Router {
 	repository := ProvideRepository()
-	service := ProvideService(repository, db)
+	service := ProvideService(repository)
 	handler := ProvideHandler(service, validate)
 	router := ProvideRoute(handler)
 	return router

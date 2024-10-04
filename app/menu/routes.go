@@ -14,7 +14,6 @@ func (router *Router) InitializeRoute(mux *chi.Mux) {
 	mux.Route("/api/menu", func(route chi.Router) {
 		route.Use(middleware.AuthorizationCheckMiddleware)
 		route.Use(middleware.VerifyAccessTokenMiddleware)
-		route.Get("/all", router.hdl.GetMenus())
-		route.Get("/children/{menuId}", router.hdl.GetMenuChildren())
+		route.Get("/all", router.hdl.GetMenu())
 	})
 }
