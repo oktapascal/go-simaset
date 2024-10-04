@@ -12,7 +12,7 @@ type Repository struct {
 }
 
 func (rpo *Repository) FindByEmail(ctx context.Context, tx *sql.Tx, email string) (*model.User, error) {
-	query := "select id, username, email, password, name, phone, avatar from users where email = ?"
+	query := "select id, username, email, password, name, phone, avatar, menu_group_id from users where email = ?"
 
 	rows, err := tx.QueryContext(ctx, query, email)
 	if err != nil {
@@ -28,7 +28,7 @@ func (rpo *Repository) FindByEmail(ctx context.Context, tx *sql.Tx, email string
 
 	user := new(model.User)
 	if rows.Next() {
-		err = rows.Scan(&user.Id, &user.Username, &user.Email, &user.Password, &user.Name, &user.Phone, &user.Avatar)
+		err = rows.Scan(&user.Id, &user.Username, &user.Email, &user.Password, &user.Name, &user.Phone, &user.Avatar, &user.GroupMenu)
 
 		if err != nil {
 			panic(err)
@@ -41,7 +41,7 @@ func (rpo *Repository) FindByEmail(ctx context.Context, tx *sql.Tx, email string
 }
 
 func (rpo *Repository) FindByUsername(ctx context.Context, tx *sql.Tx, username string) (*model.User, error) {
-	query := "select id, username, email, password, name, phone, avatar from users where username = ?"
+	query := "select id, username, email, password, name, phone, avatar, menu_group_id from users where username = ?"
 
 	rows, err := tx.QueryContext(ctx, query, username)
 	if err != nil {
@@ -57,7 +57,7 @@ func (rpo *Repository) FindByUsername(ctx context.Context, tx *sql.Tx, username 
 
 	user := new(model.User)
 	if rows.Next() {
-		err = rows.Scan(&user.Id, &user.Username, &user.Email, &user.Password, &user.Name, &user.Phone, &user.Avatar)
+		err = rows.Scan(&user.Id, &user.Username, &user.Email, &user.Password, &user.Name, &user.Phone, &user.Avatar, &user.GroupMenu)
 
 		if err != nil {
 			panic(err)

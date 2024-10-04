@@ -9,6 +9,7 @@ type JwtParameters struct {
 	Id          string
 	Email       string
 	Username    string
+	GroupMenu   string
 	FlagCreate  bool
 	FlagRead    bool
 	FlagUpdate  bool

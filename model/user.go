@@ -17,6 +17,7 @@ type (
 		Name         string
 		Phone        string
 		Avatar       string
+		GroupMenu    string
 		StatusActive bool
 		DeletedAt    time.Time
 	}

@@ -26,5 +26,25 @@
         "children": []
       }
     ]
+  },
+  {
+    "id": "M4",
+    "name": "Settings",
+    "icon": "SettingIcon",
+    "path_url": "",
+    "children": [
+      {
+        "id": "M4A",
+        "name": "Users",
+        "path_url": "/settings/users",
+        "children": []
+      },
+      {
+        "id": "M4B",
+        "name": "Menu",
+        "path_url": "/settings/menus",
+        "children": []
+      }
+    ]
   }
 ]

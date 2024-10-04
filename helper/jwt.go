@@ -45,6 +45,7 @@ func GenerateRefreshToken(parameters *config.JwtParameters) (string, int64, erro
 		"flag_read":   parameters.FlagRead,
 		"flag_update": parameters.FlagUpdate,
 		"flag_delete": parameters.FlagDelete,
+		"menu_group":  parameters.GroupMenu,
 	})
 
 	tokenString, err := token.SignedString([]byte(viper.GetString("JWT_REFRESH_SIGNATURE_KEY")))
