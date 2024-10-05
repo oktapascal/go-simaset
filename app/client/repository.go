@@ -44,11 +44,11 @@ func (rpo *Repository) GenerateClientKode(ctx context.Context, tx *sql.Tx) *stri
 		strNumber = strconv.Itoa(number)
 
 		if len(strNumber) == 3 {
-			id = fmt.Sprintf("KTG-%d", strNumber)
+			id = fmt.Sprintf("KTG-%s", strNumber)
 		} else if len(strNumber) == 2 {
-			id = fmt.Sprintf("KTG-0%d", strNumber)
+			id = fmt.Sprintf("KTG-0%s", strNumber)
 		} else {
-			id = fmt.Sprintf("KTG-00%d", strNumber)
+			id = fmt.Sprintf("KTG-00%s", strNumber)
 		}
 	} else {
 		id = "KTG-001"

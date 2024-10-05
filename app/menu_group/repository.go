@@ -44,9 +44,9 @@ func (rpo *Repository) GenerateMenuGroupKode(ctx context.Context, tx *sql.Tx) *s
 		strNumber = strconv.Itoa(number)
 
 		if len(strNumber) == 2 {
-			id = fmt.Sprintf("MG-%d", strNumber)
+			id = fmt.Sprintf("MG-%s", strNumber)
 		} else {
-			id = fmt.Sprintf("MG-0%d", strNumber)
+			id = fmt.Sprintf("MG-0%s", strNumber)
 		}
 	} else {
 		id = "MG-01"
