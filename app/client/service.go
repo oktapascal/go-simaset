@@ -21,7 +21,10 @@ func (svc *Service) StoreClient(ctx context.Context, request *model.SaveClientRe
 
 	defer helper.CommitRollback(tx)
 
+	id := svc.rpo.GenerateClientKode(ctx, tx)
+
 	client := new(model.Client)
+	client.Id = *id
 	client.Name = request.Name
 	client.Phone = request.Phone
 	client.Address = request.Address

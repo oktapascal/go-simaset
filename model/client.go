@@ -79,6 +79,7 @@ type (
 	}
 
 	ClientRepository interface {
+		GenerateClientKode(ctx context.Context, tx *sql.Tx) *string
 		CreateClient(ctx context.Context, tx *sql.Tx, data *Client) *Client
 		CreateClientPic(ctx context.Context, tx *sql.Tx, data *[]ClientPic) *[]ClientPic
 		UpdateClient(ctx context.Context, tx *sql.Tx, data *Client) *Client

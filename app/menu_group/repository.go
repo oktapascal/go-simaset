@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/oktapascal/go-simpro/model"
 	"strconv"
 )
@@ -43,9 +44,9 @@ func (rpo *Repository) GenerateMenuGroupKode(ctx context.Context, tx *sql.Tx) *s
 		strNumber = strconv.Itoa(number)
 
 		if len(strNumber) == 2 {
-			id = "MG-" + strNumber
+			id = fmt.Sprintf("MG-%d", strNumber)
 		} else {
-			id = "MG-0" + strNumber
+			id = fmt.Sprintf("MG-0%d", strNumber)
 		}
 	} else {
 		id = "MG-01"

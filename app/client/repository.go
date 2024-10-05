@@ -6,24 +6,18 @@ import (
 	"errors"
 	"fmt"
 	"github.com/oktapascal/go-simpro/model"
+	"strconv"
 	"strings"
 )
 
 type Repository struct{}
 
-func (rpo *Repository) CreateClient(ctx context.Context, tx *sql.Tx, data *model.Client) *model.Client {
-	query := "insert into clients (id, name, address, phone) values (UUID(), ?, ?, ?)"
+func (rpo *Repository) GenerateClientKode(ctx context.Context, tx *sql.Tx) *string {
+	query := "select id from clients order by created_at desc limit 1"
 
-	_, err := tx.ExecContext(ctx, query, data.Name, data.Address, data.Phone)
+	rows, err := tx.QueryContext(ctx, query)
 	if err != nil {
 		panic(err)
-	}
-
-	query = "select id from clients order by created_at desc"
-
-	rows, errRows := tx.QueryContext(ctx, query)
-	if errRows != nil {
-		panic(errRows)
 	}
 
 	defer func() {
@@ -36,9 +30,40 @@ func (rpo *Repository) CreateClient(ctx context.Context, tx *sql.Tx, data *model
 	var id string
 	if rows.Next() {
 		err = rows.Scan(&id)
+		if err != nil {
+			panic(err)
+		}
+
+		strNumber := id[4:]
+		number, errConvert := strconv.Atoi(strNumber)
+		if errConvert != nil {
+			panic(errConvert)
+		}
+
+		number++
+		strNumber = strconv.Itoa(number)
+
+		if len(strNumber) == 3 {
+			id = fmt.Sprintf("KTG-%d", strNumber)
+		} else if len(strNumber) == 2 {
+			id = fmt.Sprintf("KTG-0%d", strNumber)
+		} else {
+			id = fmt.Sprintf("KTG-00%d", strNumber)
+		}
+	} else {
+		id = "KTG-001"
 	}
 
-	data.Id = id
+	return &id
+}
+
+func (rpo *Repository) CreateClient(ctx context.Context, tx *sql.Tx, data *model.Client) *model.Client {
+	query := "insert into clients (id, name, address, phone) values (?, ?, ?, ?)"
+
+	_, err := tx.ExecContext(ctx, query, data.Id, data.Name, data.Address, data.Phone)
+	if err != nil {
+		panic(err)
+	}
 
 	return data
 }
