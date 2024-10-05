@@ -8,10 +8,23 @@
   },
   {
     "id": "M2",
-    "name": "Client",
-    "icon": "BuildingIcon",
-    "path_url": "/clients",
-    "children": []
+    "name": "Master",
+    "icon": "DatabaseIcon",
+    "path_url": "/master",
+    "children": [
+      {
+        "id": "M2A",
+        "name": "Client",
+        "path_url": "/master/clients",
+        "children": []
+      },
+      {
+        "id": "M2B",
+        "name": "PIC",
+        "path_url": "/master/pic",
+        "children": []
+      }
+    ]
   },
   {
     "id": "M3",
