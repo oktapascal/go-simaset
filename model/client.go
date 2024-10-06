@@ -16,12 +16,13 @@ type (
 	}
 
 	ClientPic struct {
-		Id       string
-		ClientId string
-		Name     string
-		Phone    string
-		Email    string
-		Address  string
+		Id         int
+		ClientCode string
+		ClientId   string
+		Name       string
+		Phone      string
+		Email      string
+		Address    string
 	}
 
 	SaveClientPicRequest struct {
@@ -32,11 +33,12 @@ type (
 	}
 
 	UpdateClientPicRequest struct {
-		Id      string `json:"id"`
-		Name    string `json:"name" validate:"required,min=1,max=50"`
-		Email   string `json:"email" validate:"required,email,min=1,max=50"`
-		Phone   string `json:"phone" validate:"required,min=1,max=13"`
-		Address string `json:"address" validate:"required,min=1,max=100"`
+		Id         string `json:"id"`
+		ClientCode string `json:"client_code"`
+		Name       string `json:"name" validate:"required,min=1,max=50"`
+		Email      string `json:"email" validate:"required,email,min=1,max=50"`
+		Phone      string `json:"phone" validate:"required,min=1,max=13"`
+		Address    string `json:"address" validate:"required,min=1,max=100"`
 	}
 
 	SaveClientRequest struct {

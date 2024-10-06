@@ -8,6 +8,7 @@ import (
 	"github.com/oktapascal/go-simpro/model"
 	"github.com/oktapascal/go-simpro/web"
 	"net/http"
+	"strconv"
 )
 
 type Handler struct {
@@ -58,6 +59,28 @@ func (hdl *Handler) SaveClient() http.HandlerFunc {
 
 func (hdl *Handler) GetAllClients() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
+		params := helper.DefaultPaginationParams()
+
+		pageParam := request.URL.Query().Get("page")
+		pageSizeParam := request.URL.Query().Get("page_size")
+		sortByParam := request.URL.Query().Get("sort_by")
+		orderByParam := request.URL.Query().Get("order_by")
+		filterByParam := request.URL.Query().Get("filter_by")
+		filterValueParam := request.URL.Query().Get("filter_value")
+		cursorParam := request.URL.Query().Get("cursor")
+
+		page, errPageParam := strconv.Atoi(pageParam)
+		if errPageParam != nil || page < 1 {
+			page = params.Page
+		}
+
+		pageSize, errPageSize := strconv.Atoi(pageSizeParam)
+		if errPageSize != nil || pageSize < 1 {
+			pageSize = params.PageSize
+		}
+
+		params.ApplyPaginationParams(page, pageSize, sortByParam, orderByParam, filterByParam, filterValueParam, cursorParam)
+
 		ctx := request.Context()
 		result := hdl.svc.GetAllClients(ctx)
 
