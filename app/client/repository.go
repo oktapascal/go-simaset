@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/oktapascal/go-simpro/helper"
 	"github.com/oktapascal/go-simpro/model"
 	"strconv"
 	"strings"
@@ -96,20 +97,33 @@ func (rpo *Repository) CreateClientPic(ctx context.Context, tx *sql.Tx, data *[]
 	return data
 }
 
-func (rpo *Repository) GetAllClients(ctx context.Context, tx *sql.Tx) *[]model.Client {
+func (rpo *Repository) GetAllClients(ctx context.Context, tx *sql.Tx, params *helper.PaginationParams) *[]model.Client {
+	// base query
 	//goland:noinspection SqlNoDataSourceInspection
-	query := `select t1.id, t1.name, t1.address, t1.phone, t2.jumlah_pic
-	from clients t1
-	inner join (
-		select client_id, count(id) jumlah_pic
-		from clients_pic
-		where deleted_at is null
-		group by client_id
-	) t2 on t1.id=t2.client_id
-	where t1.deleted_at is null
-	order by t1.created_at desc, t1.updated_at desc`
+	query := "select t1.id, t1.name, t1.address, t1.phone from clients t1 where t1.deleted_at is null"
+	var args []any
 
-	rows, err := tx.QueryContext(ctx, query)
+	// if there is a filter, add a filter condition
+	if params.FilterBy != "" && params.FilterValue != "" {
+		query += fmt.Sprintf(" and %s=?", params.FilterBy)
+		args = append(args, params.FilterValue)
+	}
+
+	// add sorting by and order by
+	if params.SortBy != "" {
+		query += fmt.Sprintf(" order by %s %s", params.SortBy, params.OrderBy)
+	} else {
+		// if there is no sort by, give default sort by
+		query += "order by id asc"
+	}
+
+	// add limit and offset for paginate
+	offset := (params.Page - 1) * params.PageSize
+	//goland:noinspection SqlNoDataSourceInspection
+	query += " limit ? offset ?"
+	args = append(args, params.PageSize, offset)
+
+	rows, err := tx.QueryContext(ctx, query, args...)
 	if err != nil {
 		panic(err)
 	}
@@ -124,7 +138,7 @@ func (rpo *Repository) GetAllClients(ctx context.Context, tx *sql.Tx) *[]model.C
 	var clients []model.Client
 	for rows.Next() {
 		var client model.Client
-		err = rows.Scan(&client.Id, &client.Name, &client.Address, &client.Phone, &client.NumberOfPics)
+		err = rows.Scan(&client.Id, &client.Name, &client.Address, &client.Phone)
 		if err != nil {
 			panic(err)
 		}
@@ -252,7 +266,7 @@ func (rpo *Repository) UpdateClientPic(ctx context.Context, tx *sql.Tx, data *[]
 	return data
 }
 
-func (rpo *Repository) DeleteClientPic(ctx context.Context, tx *sql.Tx, id string, clientId []string) {
+func (rpo *Repository) DeleteClientPic(ctx context.Context, tx *sql.Tx, id string, clientId []int) {
 	placeholders := make([]string, len(clientId))
 	for i := range clientId {
 		placeholders[i] = "?"

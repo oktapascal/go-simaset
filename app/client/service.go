@@ -55,7 +55,7 @@ func (svc *Service) StoreClient(ctx context.Context, request *model.SaveClientRe
 	}
 }
 
-func (svc *Service) GetAllClients(ctx context.Context) []model.ClientResponse {
+func (svc *Service) GetAllClients(ctx context.Context, params *helper.PaginationParams) []model.ClientResponse {
 	tx, err := svc.db.Begin()
 	if err != nil {
 		panic(err)
@@ -63,17 +63,16 @@ func (svc *Service) GetAllClients(ctx context.Context) []model.ClientResponse {
 
 	defer helper.CommitRollback(tx)
 
-	clients := svc.rpo.GetAllClients(ctx, tx)
+	clients := svc.rpo.GetAllClients(ctx, tx, params)
 
 	var result []model.ClientResponse
 	if len(*clients) > 0 {
 		for _, value := range *clients {
 			client := model.ClientResponse{
-				Id:           value.Id,
-				Name:         value.Name,
-				Address:      value.Address,
-				Phone:        value.Phone,
-				NumberOfPics: value.NumberOfPics,
+				Id:      value.Id,
+				Name:    value.Name,
+				Address: value.Address,
+				Phone:   value.Phone,
 			}
 
 			result = append(result, client)
@@ -143,10 +142,10 @@ func (svc *Service) UpdateClient(ctx context.Context, request *model.UpdateClien
 	client.Phone = request.Phone
 	client.Address = request.Address
 
-	var clientPicCollections []string
+	var clientPicCollections []int
 
 	for _, value := range request.ClientPic {
-		if value.Id != "" && value.Id != "-" {
+		if value.Id != 0 {
 			clientPicCollections = append(clientPicCollections, value.Id)
 		}
 	}
@@ -157,7 +156,7 @@ func (svc *Service) UpdateClient(ctx context.Context, request *model.UpdateClien
 	var clientsPicInsert []model.ClientPic
 
 	for _, value := range request.ClientPic {
-		if value.Id != "" && value.Id != "-" {
+		if value.Id != 0 {
 			clientPicUpdate := model.ClientPic{
 				Id:       value.Id,
 				ClientId: client.Id,

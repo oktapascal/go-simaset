@@ -82,7 +82,7 @@ func (hdl *Handler) GetAllClients() http.HandlerFunc {
 		params.ApplyPaginationParams(page, pageSize, sortByParam, orderByParam, filterByParam, filterValueParam, cursorParam)
 
 		ctx := request.Context()
-		result := hdl.svc.GetAllClients(ctx)
+		result := hdl.svc.GetAllClients(ctx, params)
 
 		svcResponse := web.DefaultResponse{
 			Code:   http.StatusOK,
